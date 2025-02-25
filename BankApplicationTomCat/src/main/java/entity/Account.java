@@ -22,7 +22,7 @@ public class Account {
     private Branch branch;
     @OneToOne
     private Card card;
-
+    private boolean isActive;
 
 
 }

@@ -1,4 +1,4 @@
-package repository;
+package repository.customerRepository;
 
 import entity.Customer;
 import org.hibernate.Session;
@@ -12,8 +12,6 @@ public interface CustomerRepository {
     Optional<Customer> findById(Session session, Long id);
 
     List<Customer> findAll(Session session);
-
-    Customer update(Session session, Customer customer);
 
     void delete(Session session, Customer customer);
 

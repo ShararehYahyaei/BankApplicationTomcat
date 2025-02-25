@@ -1,8 +1,7 @@
-package repository;
+package repository.customerRepository;
 
 import entity.Customer;
 import org.hibernate.Session;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -11,26 +10,24 @@ public class CustomerRepoImpl implements CustomerRepository {
 
     @Override
     public Customer save(Session session, Customer customer) {
-        return null;
+        session.persist(customer);
+        return customer;
     }
 
     @Override
     public Optional<Customer> findById(Session session, Long id) {
-        return Optional.empty();
+        Customer found = session.byId(Customer.class).load(id);
+        return Optional.ofNullable(found);
     }
 
     @Override
     public List<Customer> findAll(Session session) {
-        return List.of();
+        return session.createQuery("from Customer").list();
     }
 
     @Override
     public void delete(Session session, Customer customer) {
-
+        session.delete(customer);
     }
 
-    @Override
-    public Customer update(Session session, Customer customer) {
-        return null;
-    }
 }

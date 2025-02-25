@@ -22,4 +22,8 @@ public class Branch {
     List<Employee> employees = new ArrayList<>();
     @OneToMany
     List<Account> accounts = new ArrayList<>();
+    @OneToOne
+    private Manager manager;
+    @OneToMany
+    private List<Customer>customers = new ArrayList<>();
 }
