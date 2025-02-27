@@ -13,6 +13,8 @@ import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
+import service.BranchService.BranchServiceImpl;
+import service.BranchService.BranchServiceInter;
 
 
 import java.util.List;
@@ -22,7 +24,8 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
     private final CustomerRepository customerRepository = new CustomerRepoImpl();
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
-    private final BranchRepository branchRepository = new BranchRepositoryImpl();
+    private final BranchServiceInter branchService = new BranchServiceImpl();
+
 
 
     @Override
@@ -36,9 +39,8 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 customerNew.setLastName(customer.getLastName());
                 customerNew.setEmail(customer.getEmail());
                 customerNew.setPhone(customer.getPhone());
-                Branch branch = branchRepository.findByCode(session, customer.getCode());
+                Branch branch = branchService.findByCode( customer.getCode());
                 customerNew.setBranch(branch);
-
 
                 Account account = new Account();
                 account.setAccountType(customer.getAccountType());
