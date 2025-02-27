@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/BankApplicationtomcat.iml" filepath="$PROJECT_DIR$/.idea/BankApplicationtomcat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BankApplicationTomCat/demo.iml" filepath="$PROJECT_DIR$/BankApplicationTomCat/demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/BankApplicationTomCat/ticket_reservation.iml" filepath="$PROJECT_DIR$/BankApplicationTomCat/ticket_reservation.iml" />
     </modules>
   </component>

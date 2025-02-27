@@ -13,8 +13,7 @@ import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
-import service.BranchService.BranchServiceImpl;
-import service.BranchService.BranchServiceInter;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +44,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 account.setAccountType(customer.getAccountType());
                 account.setCustomer(customerNew);
                 account.setBalance(customer.getBalance());
-                account.setActive(customer.isActive());
+                account.setActive(true);
                 account.setAccountNumber(customer.getAccountNumber());
                 account.setBranch(branch);
 

@@ -12,9 +12,7 @@ public class CustomerDto {
     private AccountType accountType;
     private Long balance;
     private String accountNumber;
-    private  String code;
-    private boolean active = false;
-
+    private String code;
 
 
 }
