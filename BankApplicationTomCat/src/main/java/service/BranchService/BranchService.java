@@ -1,13 +1,11 @@
 package service.BranchService;
 
-import entity.Account;
 import entity.Branch;
-import entity.Customer;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BranchServiceInter {
+public interface BranchService {
     Branch save(Branch branch);
     Optional<Branch> findById(Long id);
 

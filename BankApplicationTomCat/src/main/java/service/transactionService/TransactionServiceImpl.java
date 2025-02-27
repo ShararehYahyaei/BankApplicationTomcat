@@ -10,7 +10,7 @@ import repository.transactionRepository.TransactionRepositoryImpl;
 import java.util.List;
 import java.util.Optional;
 
-public class TransactionServiceImpl implements TransactionServiceInter {
+public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
 
     @Override

@@ -18,7 +18,7 @@ public class Account {
     private Long balance;
     @OneToOne
     private Customer customer;
-    @OneToOne
+    @ManyToOne
     private Branch branch;
     @OneToOne
     private Card card;

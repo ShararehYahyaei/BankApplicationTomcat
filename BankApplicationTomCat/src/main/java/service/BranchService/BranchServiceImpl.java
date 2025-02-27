@@ -9,7 +9,7 @@ import repository.BranchRepostiroy.BranchRepository;
 import java.util.List;
 import java.util.Optional;
 
-public class BranchServiceImpl implements BranchServiceInter {
+public class BranchServiceImpl implements BranchService {
     private final BranchRepository branchRepository = new BranchRepositoryImpl();
 
     @Override

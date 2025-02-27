@@ -3,20 +3,18 @@ package service.customerService;
 
 import config.SessionFactoryInstance;
 import dto.CustomerDto;
-import entity.Account;
-import entity.Branch;
-import entity.Customer;
-import entity.Employee;
-import repository.BranchRepostiroy.BranchRepository;
-import repository.BranchRepostiroy.BranchRepositoryImpl;
+import entity.*;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
 import service.BranchService.BranchServiceImpl;
-import service.BranchService.BranchServiceInter;
+import service.BranchService.BranchService;
+import service.transactionService.TransactionServiceImpl;
+import service.transactionService.TransactionService;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,35 +22,28 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
     private final CustomerRepository customerRepository = new CustomerRepoImpl();
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
-    private final BranchServiceInter branchService = new BranchServiceImpl();
-
-
+    private final BranchService branchService = new BranchServiceImpl();
+    private final TransactionService transactionService = new TransactionServiceImpl();
 
     @Override
-    public Customer save(CustomerDto customer) {
+    public Customer save(CustomerDto customerDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Customer customerNew = new Customer();
-                customerNew.setFullName(customer.getFullName());
-                customerNew.setLastName(customer.getLastName());
-                customerNew.setEmail(customer.getEmail());
-                customerNew.setPhone(customer.getPhone());
-                Branch branch = branchService.findByCode( customer.getCode());
-                customerNew.setBranch(branch);
-
-                Account account = new Account();
-                account.setAccountType(customer.getAccountType());
-                account.setCustomer(customerNew);
-                account.setBalance(customer.getBalance());
-                account.setActive(true);
-                account.setAccountNumber(customer.getAccountNumber());
-                account.setBranch(branch);
-
-                customerNew.setAccount(account);
-                Customer saveCustomer = customerRepository.save(session, customerNew);
+                Branch branch = branchService.findByCode(customerDto.getCode());
+                Customer customer = createCustomer(customerDto, branch);
+                Account account = createAccount(customerDto, customer, branch);
+                Customer saveCustomer = customerRepository.save(session, customer);
                 accountRepository.save(session, account);
+                Transaction transaction=Transaction.builder()
+                        .transactionDate(LocalDate.now())
+                        .type(TransactionType.Deposit)
+                        .amount(account.getBalance())
+                        .source(null)
+                        .destination(account)
+                        .build();
+                transactionService.save(transaction);
                 session.getTransaction().commit();
                 return saveCustomer;
 
@@ -62,6 +53,28 @@ public class CustomerServiceImpl implements CustomerServiceInter {
             }
         }
         return null;
+    }
+
+    private static Account createAccount(CustomerDto customerDto, Customer customer, Branch branch) {
+        Account account = new Account();
+        account.setAccountType(customerDto.getAccountType());
+        account.setCustomer(customer);
+        account.setBalance(customerDto.getBalance());
+        account.setActive(true);
+        account.setAccountNumber(customerDto.getAccountNumber());
+        account.setBranch(branch);
+        customer.setAccount(account);
+        return account;
+    }
+
+    private static Customer createCustomer(CustomerDto customerDto, Branch branch) {
+        Customer customer = new Customer();
+        customer.setFullName(customerDto.getFullName());
+        customer.setLastName(customerDto.getLastName());
+        customer.setEmail(customerDto.getEmail());
+        customer.setPhone(customerDto.getPhone());
+        customer.setBranch(branch);
+        return customer;
     }
 
     @Override
