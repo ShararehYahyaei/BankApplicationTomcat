@@ -2,10 +2,19 @@ package service.customerService;
 
 
 import config.SessionFactoryInstance;
+import dto.CustomerDto;
+import entity.Account;
+import entity.Branch;
 import entity.Customer;
 import entity.Employee;
+import repository.BranchRepostiroy.BranchRepository;
+import repository.BranchRepostiroy.BranchRepositoryImpl;
+import repository.accountReposiotry.AccountRepository;
+import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
+import service.BranchService.BranchServiceImpl;
+import service.BranchService.BranchServiceInter;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,14 +22,36 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerServiceInter {
 
     private final CustomerRepository customerRepository = new CustomerRepoImpl();
+    private final AccountRepository accountRepository = new AccountRepositoryImpl();
+    private final BranchRepository branchRepository = new BranchRepositoryImpl();
+
 
     @Override
-    public Customer save(Customer customer) {
+    public Customer save(CustomerDto customer) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Customer saveCustomer = customerRepository.save(session, customer);
+                Customer customerNew = new Customer();
+                customerNew.setFullName(customer.getFullName());
+                customerNew.setLastName(customer.getLastName());
+                customerNew.setEmail(customer.getEmail());
+                customerNew.setPhone(customer.getPhone());
+                Branch branch = branchRepository.findByCode(session, customer.getCode());
+                customerNew.setBranch(branch);
+
+
+                Account account = new Account();
+                account.setAccountType(customer.getAccountType());
+                account.setCustomer(customerNew);
+                account.setBalance(customer.getBalance());
+                account.setActive(customer.isActive());
+                account.setAccountNumber(customer.getAccountNumber());
+                account.setBranch(branch);
+
+                customerNew.setAccount(account);
+                Customer saveCustomer = customerRepository.save(session, customerNew);
+                accountRepository.save(session, account);
                 session.getTransaction().commit();
                 return saveCustomer;
 
@@ -76,7 +107,8 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 session.beginTransaction();
                 Optional<Customer> found = customerRepository.findById(session, customer.getId());
                 if (found.isPresent()) {
-                    found.get().setName(customer.getName());
+                    found.get().setFullName(customer.getFullName());
+                    found.get().setLastName(customer.getLastName());
                     found.get().setEmail(customer.getEmail());
                     found.get().setPhone(customer.getPhone());
                     customerRepository.save(session, found.get());
@@ -96,6 +128,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         return null;
 
     }
+
 
     @Override
     public void delete(Customer customer) {

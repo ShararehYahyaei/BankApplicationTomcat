@@ -23,6 +23,8 @@ public class Account {
     @OneToOne
     private Card card;
     private boolean isActive;
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
 
 
 }

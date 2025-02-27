@@ -1,27 +1,26 @@
-package service.accuntService;
+package service.BranchService;
 
 import config.SessionFactoryInstance;
-import entity.Account;
+import entity.Branch;
 import entity.Employee;
-import repository.accountReposiotry.AccountRepository;
-import repository.accountReposiotry.AccountRepositoryImpl;
+import repository.BranchRepostiroy.BranchRepositoryImpl;
+import repository.BranchRepostiroy.BranchRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public class AccountServiceImpl implements AccountServiceInterface {
-    private final AccountRepository accountRepository = new AccountRepositoryImpl();
-
+public class BranchServiceImpl implements BranchServiceInter {
+    private final BranchRepository branchRepository = new BranchRepositoryImpl();
 
     @Override
-    public Account save(Account account) {
+    public Branch save(Branch branch) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Account saveAccount = accountRepository.save(session, account);
+                Branch saveBranch = branchRepository.save(session, branch);
                 session.getTransaction().commit();
-                return saveAccount;
+                return saveBranch;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -32,12 +31,12 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public Optional<Account> findById(Long id) {
+    public Optional<Branch> findById(Long id) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Optional<Account> byId = accountRepository.findById(session, id);
+                Optional<Branch> byId = branchRepository.findById(session, id);
                 session.getTransaction().commit();
                 return byId;
             } catch (Exception e) {
@@ -50,14 +49,14 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public List<Account> findAll() {
+    public List<Branch> findAll() {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                List<Account> accounts = accountRepository.findAll(session);
+                List<Branch> all = branchRepository.findAll(session);
                 session.getTransaction().commit();
-                return accounts;
+                return all;
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
@@ -68,18 +67,18 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public Account update(Account account) {
+    public Branch update(Branch branch) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Optional<Account> found = accountRepository.findById(session, account.getId());
+                Optional<Branch> found = branchRepository.findById(session, branch.getId());
                 if (found.isPresent()) {
-                    found.get().setBalance(account.getBalance());
-                    found.get().setActive(account.isActive());
-                    accountRepository.save(session, found.get());
+                    found.get().setName(branch.getName());
+                    found.get().setLocation(branch.getLocation());
+                    branchRepository.save(session, found.get());
                 } else {
-                    System.out.println("Account not found");
+                    System.out.println("Branch not found");
                     session.getTransaction().rollback();
 
                 }
@@ -93,19 +92,19 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public void delete(Account account) {
+    public void delete(Branch branch) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
                 new Employee().getId();
-                Optional<Account> found = accountRepository.findById(session, account.getId());
+                Optional<Branch> found = branchRepository.findById(session, branch.getId());
 
                 if (found.isPresent()) {
-                    accountRepository.delete(session, account);
+                    branchRepository.delete(session, branch);
                     session.getTransaction().commit();
                 } else {
-                    System.out.println("Account with id " + account.getId() + " does not exist");
+                    System.out.println("Branch with id " + branch.getId() + " does not exist");
                     session.getTransaction().rollback();
                 }
 
@@ -114,4 +113,23 @@ public class AccountServiceImpl implements AccountServiceInterface {
             }
         }
     }
+
+    @Override
+    public Branch findByCode(String code) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+
+            try {
+                session.beginTransaction();
+                Branch branch = branchRepository.findByCode(session, code);
+                session.getTransaction().commit();
+                return branch;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
 }

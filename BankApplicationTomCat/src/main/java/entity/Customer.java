@@ -3,29 +3,28 @@ package entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String fullName;
+    private String lastName;
     private String email;
     private String phone;
-    @OneToMany
-    private List<Account> accounts = new ArrayList<>();
+    @OneToOne
+    private Account account;
     @ManyToOne
     private Branch branch;
 
 
-    public Customer(String name, String email, String phone) {
-        this.name = name;
+    public Customer(String fullName,String lastName, String email, String phone) {
+        this.fullName = fullName;
+        this.lastName = lastName;
         this.email = email;
         this.phone = phone;
     }

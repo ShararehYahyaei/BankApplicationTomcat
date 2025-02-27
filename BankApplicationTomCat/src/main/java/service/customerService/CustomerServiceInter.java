@@ -1,6 +1,7 @@
 package service.customerService;
 
 
+import dto.CustomerDto;
 import entity.Account;
 import entity.Customer;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerServiceInter {
-    Customer save(Customer customer);
+    Customer save(CustomerDto customer);
 
     Optional<Customer> findById(Long id);
 

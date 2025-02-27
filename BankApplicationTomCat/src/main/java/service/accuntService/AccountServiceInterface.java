@@ -13,7 +13,8 @@ public interface AccountServiceInterface {
 
     List<Account> findAll();
 
-    Customer update(Account account);
+    Account update(Account account);
 
     void delete(Account account);
+
 }
