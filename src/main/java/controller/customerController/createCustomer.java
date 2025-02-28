@@ -28,22 +28,6 @@ public class createCustomer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        try {
-//            response.setStatus(200);
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            CustomerDto customer = objectMapper.readValue(request.getReader(), CustomerDto.class);
-//            customerService.save(customer);
-//            System.out.println("Received Customer: " + customer.getFullName());
-//            response.setContentType("application/json");
-//            response.getWriter().write("{\"message\": \"Customer received successfully\"}");
-//
-//        } catch (Exception e) {
-//            response.setStatus(400);
-//            response.setContentType("application/json");
-//            response.getWriter().write("{\"error\": \"Failed to process request: " + e.getMessage() + "\"}");
-//            e.printStackTrace();
-//        }
-
 
         String fullName = request.getParameter("fullName");
         String lastName = request.getParameter("lastName");
@@ -51,12 +35,12 @@ public class createCustomer extends HttpServlet {
         String phone = request.getParameter("phone");
         String accountTypeStr = request.getParameter("accountType");
 
-        // تبدیل accountTypeStr به AccountType enum با مدیریت خطا
+
         AccountType accountType = null;
         try {
-            accountType = AccountType.valueOf(accountTypeStr.toUpperCase());  // تبدیل به enum
+            accountType = AccountType.valueOf(accountTypeStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            // مدیریت خطا در صورت اشتباه بودن مقدار accountType
+
             System.out.println("Invalid account type: " + accountTypeStr);
             response.setStatus(400);
             response.getWriter().write("{\"error\": \"Invalid account type provided\"}");
@@ -67,9 +51,9 @@ public class createCustomer extends HttpServlet {
         Long balance = null;
         if (balanceStr != null && !balanceStr.trim().isEmpty()) {
             try {
-                balance = Long.parseLong(balanceStr.trim());  // تبدیل مقدار به Long
+                balance = Long.parseLong(balanceStr.trim());
             } catch (NumberFormatException e) {
-                // مدیریت خطا در صورت اشتباه بودن فرمت balance
+
                 System.out.println("Invalid balance format: " + balanceStr);
                 response.setStatus(400);
                 response.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
@@ -83,13 +67,12 @@ public class createCustomer extends HttpServlet {
         String password = request.getParameter("password");
         String customerNumber = request.getParameter("customerNumber");
 
-        // ساخت CustomerDto و ذخیره آن
         CustomerDto customerDto = CustomerDto.builder()
                 .fullName(fullName)
                 .lastName(lastName)
                 .email(email)
                 .phone(phone)
-                .accountType(accountType)  // استفاده از accountType به عنوان enum
+                .accountType(accountType)
                 .balance(balance)
                 .accountNumber(accountNumber)
                 .code(code)
@@ -98,10 +81,9 @@ public class createCustomer extends HttpServlet {
                 .customerNumber(customerNumber)
                 .build();
 
-        // ذخیره مشتری در سرویس
+
         customerService.save(customerDto);
 
-        // ارسال پیغام موفقیت به JSP
         request.setAttribute("message", "Customer saved successfully..");
         request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
