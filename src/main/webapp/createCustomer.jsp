@@ -21,7 +21,7 @@
     <input type="text" name="accountNumber" placeholder="accountNumber"/>
     <input type="text" name="code" placeholder="code"/>
     <input type="text" name="userName" placeholder="userName"/>
-    <input type="text" name="password" placeholder="password"/>
+    <input type="password" name="password" placeholder="password"/>
     <input type="text" name="customerNumber" placeholder="customerNumber"/>
     <button type="submit">submit</button>
 </form>
