@@ -1,9 +1,11 @@
 package dto;
 
 import entity.AccountType;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class CustomerDto {
     private String fullName;
     private String lastName;

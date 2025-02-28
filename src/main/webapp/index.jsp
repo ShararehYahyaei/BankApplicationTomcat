@@ -11,6 +11,21 @@
     <title>Bank Application</title>
 </head>
 <body>
-<a href="/user/create" style="color: #52a883">Create New User</a>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Home Page</title>
+</head>
+<body>
+<h2>Welcome to the Bank Application</h2>
+<a href="/createCustomer" style="display: inline-block;
+ padding: 10px 15px; background: #52a883; color: white;
+  text-decoration: none; border-radius: 5px;">
+    Go to Create Customer
+</a>
+</body>
+</html>
+
+
 </body>
 </html>

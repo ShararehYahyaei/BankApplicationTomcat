@@ -11,7 +11,7 @@
     <title>Create Customer</title>
 </head>
 <body>
-<form action="/user/create" method="post">
+<form action="/createCustomer" method="post">
     <input type="text" name="fullName" placeholder="fullName"/>
     <input type="text" name="lastName" placeholder="lastName"/>
     <input type="text" name="email" placeholder="email"/>
