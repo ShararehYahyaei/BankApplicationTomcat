@@ -6,12 +6,15 @@ import entity.Card;
 import entity.Employee;
 import repository.cardRepository.CardRepository;
 import repository.cardRepository.CardRepositoryImpl;
+import repository.customerRepository.CustomerRepoImpl;
+import repository.customerRepository.CustomerRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CardService implements CardServiceInterface {
     private final CardRepository cardRepository=new CardRepositoryImpl();
+    private final CustomerRepository customerRepository=new CustomerRepoImpl();
     @Override
     public Card save(Card card) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
