@@ -97,7 +97,6 @@ public class BranchServiceImpl implements BranchService {
 
             try {
                 session.beginTransaction();
-                new Employee().getId();
                 Optional<Branch> found = branchRepository.findById(session, branch.getId());
 
                 if (found.isPresent()) {

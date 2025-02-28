@@ -98,9 +98,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
             try {
                 session.beginTransaction();
-                new Employee().getId();
                 Optional<Account> found = accountRepository.findById(session, account.getId());
-
                 if (found.isPresent()) {
                     accountRepository.delete(session, account);
                     session.getTransaction().commit();

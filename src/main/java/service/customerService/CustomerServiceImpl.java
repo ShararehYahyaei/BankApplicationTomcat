@@ -8,6 +8,8 @@ import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
+import repository.transactionRepository.TransactionRepository;
+import repository.transactionRepository.TransactionRepositoryImpl;
 import service.BranchService.BranchServiceImpl;
 import service.BranchService.BranchService;
 import service.transactionService.TransactionServiceImpl;
@@ -23,7 +25,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
     private final CustomerRepository customerRepository = new CustomerRepoImpl();
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
     private final BranchService branchService = new BranchServiceImpl();
-    private final TransactionService transactionService = new TransactionServiceImpl();
+    private final TransactionRepository transactionService = new TransactionRepositoryImpl();
 
     @Override
     public Customer save(CustomerDto customerDto) {
@@ -43,7 +45,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                         .source(null)
                         .destination(account)
                         .build();
-                transactionService.save(transaction);
+                transactionService.save(session, transaction);
                 session.getTransaction().commit();
                 return saveCustomer;
 
@@ -150,7 +152,6 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
             try {
                 session.beginTransaction();
-                new Employee().getId();
                 Optional<Customer> found = customerRepository.findById(session, customer.getId());
 
                 if (found.isPresent()) {
