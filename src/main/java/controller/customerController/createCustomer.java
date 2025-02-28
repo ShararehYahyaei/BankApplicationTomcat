@@ -19,25 +19,6 @@ import java.util.List;
 @WebServlet("/createCustomer")
 public class createCustomer extends HttpServlet {
     private final CustomerServiceInter customerService = new CustomerServiceImpl();
-//
-//    @Override
-//    protected void doGet(HttpServletRequest req,
-//                         HttpServletResponse resp
-//    ) throws ServletException, IOException {
-//        resp.setContentType("application/json");
-//
-//        try {
-//            List<Customer> allCustomers = customerService.findAll();
-//            ObjectMapper mapper = new ObjectMapper();
-//            String json = mapper.writeValueAsString(allCustomers);
-//            resp.setContentType("application/json");
-//            resp.getWriter().write(json);
-//
-//        } catch (Exception e) {
-//            resp.setStatus(400);
-//            e.printStackTrace();
-//        }
-//    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
