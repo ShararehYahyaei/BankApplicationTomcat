@@ -34,8 +34,6 @@ public class createCustomer extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String accountTypeStr = request.getParameter("accountType");
-
-
         AccountType accountType = null;
         try {
             accountType = AccountType.valueOf(accountTypeStr.toUpperCase());

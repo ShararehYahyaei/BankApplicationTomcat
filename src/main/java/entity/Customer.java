@@ -19,6 +19,19 @@ public class Customer {
     private String userName;
     private String password;
     private String customerNumber;
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "fullName='" + fullName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", userName='" + userName + '\'' +
+                ", customerNumber='" + customerNumber + '\'' +
+                '}';
+    }
+
     @OneToOne
     private Account account;
     @ManyToOne

@@ -27,6 +27,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
     private final BranchService branchService = new BranchServiceImpl();
     private final TransactionRepository transactionService = new TransactionRepositoryImpl();
 
+
     @Override
     public Customer save(CustomerDto customerDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
@@ -76,6 +77,8 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         customer.setEmail(customerDto.getEmail());
         customer.setPhone(customerDto.getPhone());
         customer.setBranch(branch);
+        customer.setUserName(customerDto.getUserName());
+        customer.setPassword(customerDto.getPassword());
         customer.setCustomerNumber(customerDto.getCustomerNumber());
         return customer;
     }

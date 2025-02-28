@@ -23,6 +23,11 @@
   text-decoration: none; border-radius: 5px;">
     Go to Create Customer
 </a>
+<a href="/getAllCustomers" style="display: inline-block;
+ padding: 10px 15px; background: #52a883; color: white;
+  text-decoration: none; border-radius: 5px;">
+    Show All Customers
+</a>
 </body>
 </html>
 
