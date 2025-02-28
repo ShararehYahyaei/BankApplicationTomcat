@@ -76,6 +76,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         customer.setEmail(customerDto.getEmail());
         customer.setPhone(customerDto.getPhone());
         customer.setBranch(branch);
+        customer.setCustomerNumber(customerDto.getCustomerNumber());
         return customer;
     }
 

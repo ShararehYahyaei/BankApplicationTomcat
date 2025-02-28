@@ -13,6 +13,9 @@ public class CustomerDto {
     private Long balance;
     private String accountNumber;
     private String code;
+    private String userName;
+    private String password;
+    private String customerNumber;
 
 
 }

@@ -16,6 +16,9 @@ public class Customer {
     private String lastName;
     private String email;
     private String phone;
+    private String userName;
+    private String password;
+    private String customerNumber;
     @OneToOne
     private Account account;
     @ManyToOne
