@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 Account account = createAccount(customerDto, customer, branch);
                 Customer saveCustomer = customerRepository.save(session, customer);
                 accountRepository.save(session, account);
-                Transaction transaction=Transaction.builder()
+                Transaction transaction = Transaction.builder()
                         .transactionDate(LocalDate.now())
                         .type(TransactionType.Deposit)
                         .amount(account.getBalance())
@@ -170,5 +170,24 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public Customer findByCustomerNumber(String customerNumber) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+
+            try {
+                session.beginTransaction();
+                Customer byCustomerNumber = customerRepository.findByCustomerNumber(session, customerNumber);
+                session.getTransaction().commit();
+                return byCustomerNumber;
+            } catch (Exception e) {
+                e.printStackTrace();
+                session.getTransaction().rollback();
+
+            }
+        }
+        return null;
+
     }
 }

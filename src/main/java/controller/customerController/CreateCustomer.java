@@ -1,9 +1,7 @@
 package controller.customerController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.CustomerDto;
 import entity.AccountType;
-import entity.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,11 +11,10 @@ import service.customerService.CustomerServiceImpl;
 import service.customerService.CustomerServiceInter;
 
 import java.io.IOException;
-import java.util.List;
 
 
 @WebServlet("/createCustomer")
-public class createCustomer extends HttpServlet {
+public class CreateCustomer extends HttpServlet {
     private final CustomerServiceInter customerService = new CustomerServiceImpl();
 
     @Override

@@ -2,6 +2,8 @@ package repository.customerRepository;
 
 import entity.Customer;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,14 @@ public class CustomerRepoImpl implements CustomerRepository {
     @Override
     public void delete(Session session, Customer customer) {
         session.delete(customer);
+    }
+
+    @Override
+    public Customer findByCustomerNumber(Session session, String customerNumber) {
+        Query<Customer> query = session.createQuery("FROM Customer c WHERE c.customernumber " +
+                "= :customerNumber", Customer.class);
+        query.setParameter("customerNumber", customerNumber);
+        return query.uniqueResult();
     }
 
 }

@@ -28,6 +28,11 @@
   text-decoration: none; border-radius: 5px;">
     Show All Customers
 </a>
+<form action="/getCustomer" method="get">
+    <input type="text" name="customerNumber" placeholder="Enter Customer Number" required>
+    <button type="submit">Show Customer</button>
+</form>
+
 </body>
 </html>
 

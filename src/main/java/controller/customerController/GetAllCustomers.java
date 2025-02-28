@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/getAllCustomers")
-public class getAllCustomers extends HttpServlet {
+public class GetAllCustomers extends HttpServlet {
     private final CustomerServiceInter customerService = new CustomerServiceImpl();
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Customer> all = customerService.findAll();
