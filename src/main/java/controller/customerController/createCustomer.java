@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-@WebServlet("/customer")
+@WebServlet("/createCustomer")
 public class createCustomer extends HttpServlet {
     private final CustomerServiceInter customerService = new CustomerServiceImpl();
 //
