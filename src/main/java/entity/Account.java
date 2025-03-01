@@ -27,4 +27,14 @@ public class Account {
     private AccountType accountType;
 
 
+    @Override
+    public String toString() {
+        return "Account {\n" +
+                "  accountNumber='" + accountNumber + "',\n" +
+                "  balance=" + balance + ",\n" +
+                "  card=" + card + ",\n" +
+                "  isActive=" + isActive + ",\n" +
+                "  accountType=" + accountType + "\n" +
+                "}";
+    }
 }

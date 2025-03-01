@@ -32,10 +32,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public Account getAccountByCustomerNumber(Session session, Customer customer) {
+    public Account getAccountByCustomerNumber(Session session, String customerNumber) {
         return session.createQuery("SELECT c.account FROM  Customer c where c.customerNumber = :customerNumber"
                         , Account.class)
-                .setParameter("customerNumber", customer.getCustomerNumber())
+                .setParameter("customerNumber", customerNumber)
                 .uniqueResult();
 
     }

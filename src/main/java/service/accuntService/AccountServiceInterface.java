@@ -16,6 +16,6 @@ public interface AccountServiceInterface {
     Account update(Account account);
 
     void delete(Account account);
-    Account getAccountByCustomerNumber(Customer customer);
+    Account getAccountByCustomerNumber(String customerNumber);
 
 }

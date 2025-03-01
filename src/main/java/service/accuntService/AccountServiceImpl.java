@@ -115,12 +115,12 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public Account getAccountByCustomerNumber(Customer customer) {
+    public Account getAccountByCustomerNumber(String customerNumber) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                return accountRepository.getAccountByCustomerNumber(session, customer);
+                return accountRepository.getAccountByCustomerNumber(session, customerNumber);
 
             } catch (Exception e) {
                 e.printStackTrace();
