@@ -34,8 +34,7 @@ public class CustomerRepoImpl implements CustomerRepository {
 
     @Override
     public Customer findByCustomerNumber(Session session, String customerNumber) {
-        Query<Customer> query = session.createQuery("FROM Customer c WHERE c.customernumber " +
-                "= :customerNumber", Customer.class);
+        Query<Customer> query = session.createQuery("FROM Customer c WHERE c.customerNumber = :customerNumber", Customer.class);
         query.setParameter("customerNumber", customerNumber);
         return query.uniqueResult();
     }

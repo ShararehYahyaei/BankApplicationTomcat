@@ -16,7 +16,6 @@ public class GetCustomer extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String customerNumber = req.getParameter("customerNumber");
-
         if (customerNumber == null || customerNumber.trim().isEmpty()) {
             req.setAttribute("error", "Customer Number is required!");
             req.getRequestDispatcher("/getCustomer.jsp").forward(req, resp);
@@ -27,10 +26,8 @@ public class GetCustomer extends HttpServlet {
         if (byCustomerNumber == null) {
             req.setAttribute("error", "No customer found with this number!");
         } else {
-            req.setAttribute("customer", byCustomerNumber);
+            req.setAttribute("byCustomerNumber", byCustomerNumber);
         }
-
         req.getRequestDispatcher("/getCustomer.jsp").forward(req, resp);
     }
-
 }
