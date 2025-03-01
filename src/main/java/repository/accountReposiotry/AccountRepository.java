@@ -15,4 +15,5 @@ public interface AccountRepository {
     List<Account> findAll(Session session);
 
     void delete(Session session, Account account);
+    Account getAccountByCustomerNumber(Session session, Customer customer);
 }

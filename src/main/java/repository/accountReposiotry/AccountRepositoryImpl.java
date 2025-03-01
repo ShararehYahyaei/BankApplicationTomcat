@@ -30,4 +30,13 @@ public class AccountRepositoryImpl implements AccountRepository {
     public void delete(Session session, Account account) {
         session.delete(account);
     }
+
+    @Override
+    public Account getAccountByCustomerNumber(Session session, Customer customer) {
+        return session.createQuery("SELECT c.account FROM  Customer c where c.customerNumber = :customerNumber"
+                        , Account.class)
+                .setParameter("customerNumber", customer.getCustomerNumber())
+                .uniqueResult();
+
+    }
 }

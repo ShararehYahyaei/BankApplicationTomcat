@@ -8,11 +8,8 @@ import java.util.Optional;
 
 public interface CustomerRepository {
     Customer save(Session session, Customer customer);
-
     Optional<Customer> findById(Session session, Long id);
-
     List<Customer> findAll(Session session);
-
     void delete(Session session, Customer customer);
     Customer findByCustomerNumber(Session session, String customerNumber);
 

@@ -2,6 +2,7 @@ package service.accuntService;
 
 import config.SessionFactoryInstance;
 import entity.Account;
+import entity.Customer;
 import entity.Employee;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
@@ -111,5 +112,21 @@ public class AccountServiceImpl implements AccountServiceInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public Account getAccountByCustomerNumber(Customer customer) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+
+            try {
+                session.beginTransaction();
+                return accountRepository.getAccountByCustomerNumber(session, customer);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
     }
 }
