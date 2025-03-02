@@ -17,6 +17,7 @@ public class CardService implements CardServiceInterface {
     private final CardRepository cardRepository = new CardRepositoryImpl();
     private final AccountRepository accountService = new AccountRepositoryImpl();
 
+
     @Override
     public Card save(CardDto card) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
@@ -26,6 +27,7 @@ public class CardService implements CardServiceInterface {
                 Card newCard = getCreateCard(card);
                 Account accountByCustomerNumber = accountService.getAccountByCustomerNumber(session, card.getCustomerNumber());
                 accountByCustomerNumber.setCard(newCard);
+                newCard.setAccount(accountByCustomerNumber);
                 accountService.save(session, accountByCustomerNumber);
                 accountService.save(session, accountByCustomerNumber);
                 cardRepository.save(session, newCard);
