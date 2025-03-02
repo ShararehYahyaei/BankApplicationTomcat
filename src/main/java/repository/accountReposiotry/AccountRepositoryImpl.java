@@ -39,10 +39,9 @@ public class AccountRepositoryImpl implements AccountRepository {
                 .uniqueResult();
 
     }
-
     @Override
     public Account updateAccount(Session session, Account account) {
-        session.update(account);
+        session.merge(account);
         return account;
     }
 }

@@ -5,11 +5,13 @@ import dto.CardDto;
 import entity.Account;
 import entity.Card;
 import entity.Employee;
+import exception.cardException.CardNotFoundException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.cardRepository.CardRepository;
 import repository.cardRepository.CardRepositoryImpl;
 
+import javax.smartcardio.CardNotPresentException;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,13 +100,15 @@ public class CardService implements CardServiceInterface {
                 if (found.isPresent()) {
                     cardRepository.delete(session, card);
                     session.getTransaction().commit();
-                } else {
-                    System.out.println("Card with id " + card.getId() + " does not exist");
-                    session.getTransaction().rollback();
                 }
-
+                throw new CardNotFoundException("Card not foud");
+            } catch (CardNotFoundException e) {
+                session.getTransaction().rollback();
+                System.out.println(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
+                session.getTransaction().rollback();
+
             }
         }
 

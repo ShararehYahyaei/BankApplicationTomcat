@@ -1,9 +1,9 @@
 package repository.cardRepository;
 
 import entity.Card;
-import entity.Transaction;
 import org.hibernate.Session;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +15,5 @@ public interface CardRepository {
     List<Card> findAll(Session session);
 
     void delete(Session session, Card card);
+   Card getCardExpirationDate(Session session,String cardNumber);
 }

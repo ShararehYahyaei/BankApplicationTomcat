@@ -2,6 +2,8 @@ package repository.cardRepository;
 
 import entity.Card;
 import org.hibernate.Session;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +30,13 @@ public class CardRepositoryImpl implements CardRepository {
     public void delete(Session session, Card card) {
         session.delete(card);
     }
+
+    @Override
+    public Card getCardExpirationDate(Session session, String cardNumber) {
+        return session.createQuery(
+                        "SELECT c.expiryDate FROM Card c WHERE c.cardNumber = :cardNumber", Card.class)
+                .setParameter("cardNumber", cardNumber)
+                .uniqueResult();
+    }
+
 }

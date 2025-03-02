@@ -78,7 +78,6 @@ public class CreateCustomer extends HttpServlet {
 
 
         customerService.save(customerDto);
-
         request.setAttribute("message", "Customer saved successfully..");
         request.getRequestDispatcher("/index.jsp").forward(request, response);
     }

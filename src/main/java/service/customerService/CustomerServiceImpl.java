@@ -4,6 +4,7 @@ package service.customerService;
 import config.SessionFactoryInstance;
 import dto.CustomerDto;
 import entity.*;
+import exception.customer.CustomerNotFound;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
@@ -39,13 +40,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 Account account = createAccount(customerDto, customer, branch);
                 Customer saveCustomer = customerRepository.save(session, customer);
                 accountRepository.save(session, account);
-                Transaction transaction = Transaction.builder()
-                        .transactionDate(LocalDate.now())
-                        .type(TransactionType.Deposit)
-                        .amount(account.getBalance())
-                        .source(null)
-                        .destination(account)
-                        .build();
+                Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).source(null).destination(account).build();
                 transactionService.save(session, transaction);
                 session.getTransaction().commit();
                 return saveCustomer;
@@ -134,15 +129,14 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                     customerRepository.save(session, found.get());
                     session.getTransaction().commit();
                     return found.get();
-                } else {
-                    System.out.println("Customer not found");
-                    session.getTransaction().rollback();
-
                 }
+            } catch (CustomerNotFound e) {
+                e.getCause().printStackTrace();
+                session.getTransaction().rollback();
+                System.err.println("Error: " + e.getMessage());
+
             } catch (Exception e) {
                 e.printStackTrace();
-                session.getTransaction().rollback();
-
             }
         }
         return null;

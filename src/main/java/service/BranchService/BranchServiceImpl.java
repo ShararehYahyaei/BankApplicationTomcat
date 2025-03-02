@@ -3,6 +3,7 @@ package service.BranchService;
 import config.SessionFactoryInstance;
 import entity.Branch;
 import entity.Employee;
+import exception.branchException.BranchException;
 import repository.BranchRepostiroy.BranchRepositoryImpl;
 import repository.BranchRepostiroy.BranchRepository;
 
@@ -77,11 +78,11 @@ public class BranchServiceImpl implements BranchService {
                     found.get().setName(branch.getName());
                     found.get().setLocation(branch.getLocation());
                     branchRepository.save(session, found.get());
-                } else {
-                    System.out.println("Branch not found");
-                    session.getTransaction().rollback();
-
                 }
+            } catch (BranchException e) {
+                e.printStackTrace();
+                session.getTransaction().rollback();
+                System.out.println(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
