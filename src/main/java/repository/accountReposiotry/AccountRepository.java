@@ -16,4 +16,5 @@ public interface AccountRepository {
 
     void delete(Session session, Account account);
     Account getAccountByCustomerNumber(Session session, String customerNumber);
+    Account updateAccount(Session session, Account account);
 }

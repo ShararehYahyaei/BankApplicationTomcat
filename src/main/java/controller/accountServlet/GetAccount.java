@@ -1,7 +1,6 @@
-package controller.customerController.accountServlet;
+package controller.accountServlet;
 
 import entity.Account;
-import entity.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.accuntService.AccountServiceImpl;
 import service.accuntService.AccountServiceInterface;
-import service.customerService.CustomerServiceImpl;
-import service.customerService.CustomerServiceInter;
 
 import java.io.IOException;
 

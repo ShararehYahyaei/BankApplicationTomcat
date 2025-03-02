@@ -21,4 +21,13 @@ public class Card {
     private String password;
     @OneToOne
     private Account account;
+
+    public Card(String cardNumber, String cvv2, LocalDate expiryDate, String password, String customerNumber) {
+        this.cardNumber = cardNumber;
+        this.cvv2 = cvv2;
+        this.expiryDate = expiryDate;
+        this.password = password;
+        this.account = new Account();
+
+    }
 }

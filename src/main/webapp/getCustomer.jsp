@@ -24,6 +24,21 @@
 <c:if test="${not empty error}">
     <p style="color: red;">${error}</p>
 </c:if>
+<div style="margin-top: 20px;">
+    <!-- دکمه ایجاد کارت -->
+    <a href="/createCard?customerNumber=${byCustomerNumber.customerNumber}"
+       style="display: inline-block; padding: 10px 15px; background: #007bff;
+       color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+        ایجاد کارت
+    </a>
+
+    <!-- دکمه بازگشت به صفحه قبل -->
+    <button onclick="window.history.back();"
+            style="padding: 10px 15px; background: #dc3545; color: white;
+            text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
+        بازگشت به صفحه قبل
+    </button>
+</div>
 
 </body>
 </html>

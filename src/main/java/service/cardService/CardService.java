@@ -1,29 +1,36 @@
 package service.cardService;
 
 import config.SessionFactoryInstance;
+import dto.CardDto;
 import entity.Account;
 import entity.Card;
 import entity.Employee;
+import repository.accountReposiotry.AccountRepository;
+import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.cardRepository.CardRepository;
 import repository.cardRepository.CardRepositoryImpl;
-import repository.customerRepository.CustomerRepoImpl;
-import repository.customerRepository.CustomerRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CardService implements CardServiceInterface {
-    private final CardRepository cardRepository=new CardRepositoryImpl();
-    private final CustomerRepository customerRepository=new CustomerRepoImpl();
+    private final CardRepository cardRepository = new CardRepositoryImpl();
+    private final AccountRepository accountService = new AccountRepositoryImpl();
+
     @Override
-    public Card save(Card card) {
+    public Card save(CardDto card) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
-                Card saveCard = cardRepository.save(session, card);
+                Card newCard = getCreateCard(card);
+                Account accountByCustomerNumber = accountService.getAccountByCustomerNumber(session, card.getCustomerNumber());
+                accountByCustomerNumber.setCard(newCard);
+                accountService.save(session, accountByCustomerNumber);
+                accountService.save(session, accountByCustomerNumber);
+                cardRepository.save(session, newCard);
                 session.getTransaction().commit();
-                return saveCard;
+                return newCard;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -31,6 +38,15 @@ public class CardService implements CardServiceInterface {
             }
         }
         return null;
+    }
+
+    private static Card getCreateCard(CardDto card) {
+        Card newCard = new Card();
+        newCard.setCardNumber(card.getCardNumber());
+        newCard.setPassword(card.getPassword());
+        newCard.setCvv2(card.getCvv2());
+        newCard.setExpiryDate(card.getExpiryDate());
+        return newCard;
     }
 
     @Override
