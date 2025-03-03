@@ -27,42 +27,33 @@ public class CreateCard extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cardNumber = req.getParameter("cardNumber");
-        String cvv2 = req.getParameter("cvv2");
-        String expiryDateStr = req.getParameter("expiryDate");
-        String password = req.getParameter("password");
-        String customerNumber = req.getParameter("customerNumber");
-
-        if (cardNumber == null || cardNumber.trim().isEmpty() ||
-                cvv2 == null || cvv2.trim().isEmpty() ||
-                expiryDateStr == null || expiryDateStr.trim().isEmpty() ||
-                password == null || password.trim().isEmpty() ||
-                customerNumber == null || customerNumber.trim().isEmpty()) {
-
-            req.setAttribute("error", "تمام فیلدها الزامی هستند!");
-            req.getRequestDispatcher("/createCard.jsp").forward(req, resp);
-            return;
-        }
-        LocalDate expiryDate;
         try {
-            expiryDate = LocalDate.parse(expiryDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (Exception e) {
-            req.setAttribute("error", "فرمت تاریخ معتبر نیست!");
-            req.getRequestDispatcher("/createCard.jsp").forward(req, resp);
-            return;
-        }
-        CardDto cardDto = CardDto.builder()
-                .cardNumber(cardNumber)
-                .cvv2(cvv2)
-                .expiryDate(expiryDate)
-                .password(password)
-                .customerNumber(customerNumber)
-                .build();
-        cardDto.validate();
-        cardService.save(cardDto);
-        req.setAttribute("message", "Card saved successfully..");
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
+            String cardNumber = req.getParameter("cardNumber");
+            String cvv2 = req.getParameter("cvv2");
+            String expiryDateStr = req.getParameter("expiryDate");
+            String password = req.getParameter("password");
+            String customerNumber = req.getParameter("customerNumber");
+            LocalDate expiryDate = LocalDate.parse(expiryDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            CardDto cardDto = CardDto.builder()
+                    .cardNumber(cardNumber)
+                    .cvv2(cvv2)
+                    .expiryDate(expiryDate)
+                    .password(password)
+                    .customerNumber(customerNumber)
+                    .build();
+            cardDto.validate();
+            cardService.save(cardDto);
+            resp.setStatus(200);
+            resp.getWriter().write("{\"message\": \"Customer created successfully\"}");
+            resp.sendRedirect("/index.jsp");
 
+        }catch (Exception e){
+            resp.setStatus(400);
+            e.printStackTrace();
+            req.setAttribute("error", e.getMessage());
+            req.getRequestDispatcher("/error.jsp").forward(req, resp);
+
+        }
     }
 }
 
