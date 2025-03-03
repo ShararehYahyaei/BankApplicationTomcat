@@ -18,20 +18,26 @@ public class LoggedInServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userName = req.getParameter("userName");
-        String password = req.getParameter("password");
-        if (userName == null || userName.trim().isEmpty() && (password == null || password.trim().isEmpty())) {
-            req.setAttribute("error", "userName or password is required!");
-            req.getRequestDispatcher("/index.jsp").forward(req, resp);
-            return;
-        }
+        try {
+            String userName = req.getParameter("userName");
+            String password = req.getParameter("password");
+            if (userName == null || userName.trim().isEmpty() && (password == null || password.trim().isEmpty())) {
+                req.setAttribute("error", "userName or password is required!");
+                req.getRequestDispatcher("/error.jsp").forward(req, resp);
+                return;
+            }
 
-        Customer byCustomerNumber = customerService.login(userName, password);
-        if (byCustomerNumber == null) {
-            req.setAttribute("error", "No customer found with this username or password!");
-        } else {
+            Customer byCustomerNumber = customerService.login(userName, password);
+            resp.setStatus(200);
             req.setAttribute("byCustomerNumber", byCustomerNumber);
+            req.getRequestDispatcher("/profile.jsp").forward(req, resp);
+
+        } catch (Exception e) {
+            resp.setStatus(400);
+            e.printStackTrace();
+            req.setAttribute("error", e.getMessage());
+            req.getRequestDispatcher("error.jsp").forward(req, resp);
+
         }
-        req.getRequestDispatcher("/profile.jsp").forward(req, resp);
     }
 }

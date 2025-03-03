@@ -11,6 +11,8 @@ import service.customerService.CustomerServiceImpl;
 import service.customerService.CustomerServiceInter;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @WebServlet("/createCustomer")
@@ -38,9 +40,11 @@ public class CreateCustomer extends HttpServlet {
             String userName = request.getParameter("userName");
             String password = request.getParameter("password");
             String customerNumber = request.getParameter("customerNumber");
-
             CustomerDto customerDto = CustomerDto.builder().fullName(fullName).lastName(lastName).email(email).phone(phone).accountType(accountType).balance(balance).accountNumber(accountNumber).code(code).userName(userName).password(password).customerNumber(customerNumber).build();
-            customerDto.validate();
+            Set<String> validate = customerDto.validate();
+            if (!validate.isEmpty()) {
+                throw new RuntimeException(String.join("\n", validate));
+            }
             customerService.save(customerDto);
             response.setStatus(200);
             response.getWriter().write("{\"message\": \"Customer created successfully\"}");

@@ -230,19 +230,13 @@ public class CustomerServiceImpl implements CustomerServiceInter {
     @Override
     public Customer login(String userName, String password) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                Customer byCustomerNumber = customerRepository.login(session, userName, password);
-                if (byCustomerNumber != null) {
-                    session.getTransaction().commit();
-                    return byCustomerNumber;
-                }
-                throw new CustomerNotFound("Customer with username " + byCustomerNumber.getUserName() + " does not exist");
-            } catch (Exception e) {
-                e.printStackTrace();
-                session.getTransaction().rollback();
-                throw new RuntimeException("Error occurred while logging in", e);
+
+            Customer byCustomerNumber = customerRepository.login(session, userName, password);
+            if (byCustomerNumber != null) {
+                return byCustomerNumber;
             }
+            throw new CustomerNotFound("Username or password is incorrect");
+
         }
     }
 }
