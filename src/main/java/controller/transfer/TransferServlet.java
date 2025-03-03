@@ -32,7 +32,6 @@ public class TransferServlet extends HttpServlet {
             try {
                 amount = Long.parseLong(balanceStr.trim());
             } catch (NumberFormatException e) {
-
                 System.out.println("Invalid balance format: " + balanceStr);
                 resp.setStatus(400);
                 resp.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
@@ -60,7 +59,9 @@ public class TransferServlet extends HttpServlet {
         dtoT.setExpiryDate(expiryDateParsed);
         dtoT.setPassword(password);
         dtoT.setCustomerNumber(customerNumber);
-
+        accountService.withdraw(dtoT);
+        req.setAttribute("message", "Transfer saved successfully..");
+        req.getRequestDispatcher("/index.jsp").forward(req, resp);
 
     }
 }

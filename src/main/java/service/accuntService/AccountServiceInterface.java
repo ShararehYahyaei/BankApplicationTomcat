@@ -1,5 +1,6 @@
 package service.accuntService;
 
+import dto.TransferDto;
 import entity.Account;
 import entity.Customer;
 
@@ -19,4 +20,6 @@ public interface AccountServiceInterface {
     Account getAccountByCustomerNumber(String customerNumber);
     Account updateAccount(Account account);
 
+
+    void withdraw(TransferDto transferDto);
 }

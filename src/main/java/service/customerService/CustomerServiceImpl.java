@@ -5,6 +5,7 @@ import config.SessionFactoryInstance;
 import dto.CustomerDto;
 import entity.*;
 import exception.customer.CustomerNotFound;
+import exception.customer.UsernameAlreadyExistsException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
@@ -35,6 +36,14 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
             try {
                 session.beginTransaction();
+                Customer usernameExist = isUsernameExist(customerDto.getUserName());
+                if (usernameExist != null) {
+                    throw new UsernameAlreadyExistsException("Username already exists");
+                }
+                if (isEmailExist(customerDto.getEmail()) != null) {
+                    throw new UsernameAlreadyExistsException("Email already exists");
+                }
+
                 Branch branch = branchService.findByCode(customerDto.getCode());
                 Customer customer = createCustomer(customerDto, branch);
                 Account account = createAccount(customerDto, customer, branch);
@@ -44,13 +53,12 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 transactionService.save(session, transaction);
                 session.getTransaction().commit();
                 return saveCustomer;
-
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
+                throw e;
             }
         }
-        return null;
     }
 
     private static Account createAccount(CustomerDto customerDto, Customer customer, Branch branch) {
@@ -183,5 +191,58 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         }
         return null;
 
+    }
+
+    @Override
+    public Customer isUsernameExist(String username) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+                Customer usernameExist = customerRepository.isUsernameExist(session, username);
+                session.getTransaction().commit();
+                return usernameExist;
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Customer isEmailExist(String email) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+                Customer usernameExist = customerRepository.isEmailExist(session, email);
+                session.getTransaction().commit();
+                return usernameExist;
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Customer login(String userName, String password) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+                Customer byCustomerNumber = customerRepository.login(session, userName, password);
+                if (byCustomerNumber != null) {
+                    session.getTransaction().commit();
+                    return byCustomerNumber;
+                }
+                throw new CustomerNotFound("Customer with username " + byCustomerNumber.getUserName() + " does not exist");
+            } catch (Exception e) {
+                e.printStackTrace();
+                session.getTransaction().rollback();
+                throw new RuntimeException("Error occurred while logging in", e);
+            }
+        }
     }
 }

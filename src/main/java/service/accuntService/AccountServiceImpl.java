@@ -4,8 +4,6 @@ import config.SessionFactoryInstance;
 import dto.TransferDto;
 import entity.Account;
 import entity.Card;
-import entity.Customer;
-import entity.Employee;
 import exception.accountException.AccountNotFoundException;
 import exception.accountException.CardIsNotActiveException;
 import exception.accountException.InsufficientBalanceException;
@@ -156,7 +154,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
         }
     }
 
-
+    @Override
     public void withdraw(TransferDto transferDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
             session.beginTransaction();
@@ -194,7 +192,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
             } catch (Exception e) {
                 session.getTransaction().rollback();
-                throw new RuntimeException("خطا در عملیات برداشت وجه: " + e.getMessage(), e);
+
             }
         }
     }

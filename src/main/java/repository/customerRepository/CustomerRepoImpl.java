@@ -39,4 +39,29 @@ public class CustomerRepoImpl implements CustomerRepository {
         return query.uniqueResult();
     }
 
+    @Override
+    public Customer login(Session session, String userName, String password) {
+        return session.createQuery("FROM Customer c WHERE c.userName = :userName AND c.password = :password", Customer.class)
+                .setParameter("userName", userName)
+                .setParameter("password", password)
+                .uniqueResult();
+
+    }
+
+    @Override
+    public Customer isUsernameExist(Session session, String username) {
+        return session.createQuery("FROM Customer c WHERE c.userName = :userName", Customer.class)
+                .setParameter("userName", username)
+                .uniqueResult();
+    }
+
+    @Override
+    public Customer isEmailExist(Session session, String email) {
+        return session.createQuery("FROM Customer c WHERE c.email = :email", Customer.class)
+                .setParameter("email", email)
+                .uniqueResult();
+    }
+
+
+
 }

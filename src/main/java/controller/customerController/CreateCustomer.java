@@ -25,60 +25,63 @@ public class CreateCustomer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String fullName = request.getParameter("fullName");
-        String lastName = request.getParameter("lastName");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String accountTypeStr = request.getParameter("accountType");
-        AccountType accountType = null;
         try {
-            accountType = AccountType.valueOf(accountTypeStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-
-            System.out.println("Invalid account type: " + accountTypeStr);
-            response.setStatus(400);
-            response.getWriter().write("{\"error\": \"Invalid account type provided\"}");
-            return;
-        }
-
-        String balanceStr = request.getParameter("balance");
-        Long balance = null;
-        if (balanceStr != null && !balanceStr.trim().isEmpty()) {
+            String fullName = request.getParameter("fullName");
+            String lastName = request.getParameter("lastName");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String accountTypeStr = request.getParameter("accountType");
+            AccountType accountType = null;
             try {
-                balance = Long.parseLong(balanceStr.trim());
-            } catch (NumberFormatException e) {
-
-                System.out.println("Invalid balance format: " + balanceStr);
+                accountType = AccountType.valueOf(accountTypeStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid account type: " + accountTypeStr);
                 response.setStatus(400);
-                response.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
+                response.getWriter().write("{\"error\": \"Invalid account type provided\"}");
                 return;
             }
+
+            String balanceStr = request.getParameter("balance");
+            Long balance = null;
+            if (balanceStr != null && !balanceStr.trim().isEmpty()) {
+                try {
+                    balance = Long.parseLong(balanceStr.trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid balance format: " + balanceStr);
+                    response.setStatus(400);
+                    response.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
+                    return;
+                }
+            }
+
+            String accountNumber = request.getParameter("accountNumber");
+            String code = request.getParameter("code");
+            String userName = request.getParameter("userName");
+            String password = request.getParameter("password");
+            String customerNumber = request.getParameter("customerNumber");
+
+            CustomerDto customerDto = CustomerDto.builder()
+                    .fullName(fullName)
+                    .lastName(lastName)
+                    .email(email)
+                    .phone(phone)
+                    .accountType(accountType)
+                    .balance(balance)
+                    .accountNumber(accountNumber)
+                    .code(code)
+                    .userName(userName)
+                    .password(password)
+                    .customerNumber(customerNumber)
+                    .build();
+
+            customerService.save(customerDto);
+            response.setStatus(200);
+            response.getWriter().write("{\"message\": \"Customer created successfully\"}");
+            response.sendRedirect("index.jsp");
+        } catch (Exception e) {
+            response.setStatus(400);
+            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
         }
-
-        String accountNumber = request.getParameter("accountNumber");
-        String code = request.getParameter("code");
-        String userName = request.getParameter("userName");
-        String password = request.getParameter("password");
-        String customerNumber = request.getParameter("customerNumber");
-
-        CustomerDto customerDto = CustomerDto.builder()
-                .fullName(fullName)
-                .lastName(lastName)
-                .email(email)
-                .phone(phone)
-                .accountType(accountType)
-                .balance(balance)
-                .accountNumber(accountNumber)
-                .code(code)
-                .userName(userName)
-                .password(password)
-                .customerNumber(customerNumber)
-                .build();
-
-
-        customerService.save(customerDto);
-        request.setAttribute("message", "Customer saved successfully..");
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
+
 }

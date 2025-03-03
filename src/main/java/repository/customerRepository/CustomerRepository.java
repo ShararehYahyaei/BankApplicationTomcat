@@ -12,5 +12,9 @@ public interface CustomerRepository {
     List<Customer> findAll(Session session);
     void delete(Session session, Customer customer);
     Customer findByCustomerNumber(Session session, String customerNumber);
+    Customer login(Session session, String userName, String password);
+    Customer isUsernameExist(Session session,  String username);
+    Customer isEmailExist( Session session,  String email);
+
 
 }
