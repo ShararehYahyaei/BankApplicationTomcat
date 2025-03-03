@@ -30,29 +30,9 @@ public class CreateCustomer extends HttpServlet {
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             String accountTypeStr = request.getParameter("accountType");
-            AccountType accountType = null;
-            try {
-                accountType = AccountType.valueOf(accountTypeStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                System.out.println("Invalid account type: " + accountTypeStr);
-                response.setStatus(400);
-                response.getWriter().write("{\"error\": \"Invalid account type provided\"}");
-                return;
-            }
-
+            AccountType accountType = AccountType.valueOf(accountTypeStr.toUpperCase());
             String balanceStr = request.getParameter("balance");
-            Long balance = null;
-            if (balanceStr != null && !balanceStr.trim().isEmpty()) {
-                try {
-                    balance = Long.parseLong(balanceStr.trim());
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid balance format: " + balanceStr);
-                    response.setStatus(400);
-                    response.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
-                    return;
-                }
-            }
-
+            long balance = Long.parseLong(balanceStr.trim());
             String accountNumber = request.getParameter("accountNumber");
             String code = request.getParameter("code");
             String userName = request.getParameter("userName");
@@ -67,7 +47,8 @@ public class CreateCustomer extends HttpServlet {
             response.sendRedirect("index.jsp");
         } catch (Exception e) {
             response.setStatus(400);
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            request.setAttribute("error", e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
 
