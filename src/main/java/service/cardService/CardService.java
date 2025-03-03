@@ -45,6 +45,7 @@ public class CardService implements CardServiceInterface {
     }
 
     private static Card getCreateCard(CardDto card) {
+
         Card newCard = new Card();
         newCard.setCardNumber(card.getCardNumber());
         newCard.setPassword(card.getPassword());

@@ -58,6 +58,7 @@ public class CreateCard extends HttpServlet {
                 .password(password)
                 .customerNumber(customerNumber)
                 .build();
+        cardDto.validate();
         cardService.save(cardDto);
         req.setAttribute("message", "Card saved successfully..");
         req.getRequestDispatcher("/index.jsp").forward(req, resp);

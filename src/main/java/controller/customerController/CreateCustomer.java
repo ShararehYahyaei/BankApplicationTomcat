@@ -23,8 +23,7 @@ public class CreateCustomer extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String fullName = request.getParameter("fullName");
             String lastName = request.getParameter("lastName");
@@ -60,20 +59,8 @@ public class CreateCustomer extends HttpServlet {
             String password = request.getParameter("password");
             String customerNumber = request.getParameter("customerNumber");
 
-            CustomerDto customerDto = CustomerDto.builder()
-                    .fullName(fullName)
-                    .lastName(lastName)
-                    .email(email)
-                    .phone(phone)
-                    .accountType(accountType)
-                    .balance(balance)
-                    .accountNumber(accountNumber)
-                    .code(code)
-                    .userName(userName)
-                    .password(password)
-                    .customerNumber(customerNumber)
-                    .build();
-
+            CustomerDto customerDto = CustomerDto.builder().fullName(fullName).lastName(lastName).email(email).phone(phone).accountType(accountType).balance(balance).accountNumber(accountNumber).code(code).userName(userName).password(password).customerNumber(customerNumber).build();
+            customerDto.validate();
             customerService.save(customerDto);
             response.setStatus(200);
             response.getWriter().write("{\"message\": \"Customer created successfully\"}");
