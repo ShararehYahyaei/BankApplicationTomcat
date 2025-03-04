@@ -3,6 +3,7 @@ package service.accuntService;
 import config.SessionFactoryInstance;
 import dto.TransferDto;
 import entity.Account;
+import entity.Card;
 import entity.Transaction;
 import entity.TransactionType;
 
@@ -10,6 +11,8 @@ import exception.accountException.AccountNotFoundException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 
+import repository.cardRepository.CardRepository;
+import repository.cardRepository.CardRepositoryImpl;
 import repository.transactionRepository.TransactionRepository;
 import repository.transactionRepository.TransactionRepositoryImpl;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountServiceInterface {
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
+    private final CardRepository cardRepository = new CardRepositoryImpl();
 
 
     @Override
@@ -118,11 +122,35 @@ public class AccountServiceImpl implements AccountServiceInterface {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
             try {
                 session.beginTransaction();
+                Card cardSource = cardRepository.findByCardNumber(session, transferDto.getCardNumberSource());
+                Card cardDestination = cardRepository.findByCardNumber(session, transferDto.getCardNumberDestination());
+
+
+                if (cardSource.isBlocked()) {
+                    throw new RuntimeException("card source is blocked");
+                }
+
+
+                if (!cardSource.getPassword().equals(transferDto.getPassword())) {
+                    cardSource.setFailedAttempts(cardSource.getFailedAttempts() + 1);
+
+
+                    if (cardSource.getFailedAttempts() >= 3) {
+                        cardSource.setBlocked(true);
+                        throw new RuntimeException("card source is blocked");
+                    }
+
+
+                    cardRepository.save(session, cardSource);
+                    throw new RuntimeException("pin is incorrect");
+                }
+
+
                 Account accountSource = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberSource());
                 Account accountDestination = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberDestination());
 
 
-                accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount());
+                accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount() - 600);
                 accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
 
 
@@ -145,8 +173,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
                 transactionRepository.save(session, newTransaction);
                 session.getTransaction().commit();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
                 System.out.println(e.getMessage());

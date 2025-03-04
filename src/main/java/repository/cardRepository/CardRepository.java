@@ -15,5 +15,8 @@ public interface CardRepository {
     List<Card> findAll(Session session);
 
     void delete(Session session, Card card);
-   Card getCardExpirationDate(Session session,String cardNumber);
+
+    Card getCardExpirationDate(Session session, String cardNumber);
+
+    Card findByCardNumber(Session session, String cardNumber);
 }

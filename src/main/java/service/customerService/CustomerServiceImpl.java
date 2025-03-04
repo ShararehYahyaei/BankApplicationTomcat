@@ -47,6 +47,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 Branch branch = branchService.findByCode(customerDto.getCode());
                 Customer customer = createCustomer(customerDto, branch);
                 Account account = createAccount(customerDto, customer, branch);
+                customer.getAccounts().add(account);
                 Customer saveCustomer = customerRepository.save(session, customer);
                 accountRepository.save(session, account);
                 Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).source(null).destination(account).build();

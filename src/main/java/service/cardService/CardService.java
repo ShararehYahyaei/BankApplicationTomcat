@@ -27,42 +27,49 @@ public class CardService implements CardServiceInterface {
 
     @Override
     public Card save(CardDto card) {
-        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-
-            try {
+            try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
                 session.beginTransaction();
-                Card newCard = getCreateCard(card);
-                String customerNumber = card.getCustomerNumber();
-                Customer byCustomerNumber = customerService.findByCustomerNumber(session, customerNumber);
-                Account accountByAccountNumber = accountService.getAccountByAccountNumber(session, card.getAccountNumber());
-                if (accountByAccountNumber.getCard() == null) {
-                    if (accountByAccountNumber.isActive()) {
-                        newCard.setAccount(accountByAccountNumber);
-//                        newCard.setCustomer(byCustomerNumber);
-                        cardRepository.save(session, newCard);
-                        byCustomerNumber.getCards().add(newCard);
-                        customerService.update(session, byCustomerNumber);
-                        accountByAccountNumber.setCard(newCard);
-                        accountService.updateAccount(session, accountByAccountNumber);
-                        session.getTransaction().commit();
+
+                try {
+                    Card newCard = getCreateCard(card);
+                    String customerNumber = card.getCustomerNumber();
+                    Customer byCustomerNumber = customerService.findByCustomerNumber(session, customerNumber);
+                    Account accountByAccountNumber = accountService.getAccountByAccountNumber(session, card.getAccountNumber());
+
+                    if (accountByAccountNumber.getCard() == null) {
+                        if (accountByAccountNumber.isActive()) {
+                            newCard.setAccount(accountByAccountNumber);
+                            newCard.setBlocked(false);
+                            cardRepository.save(session, newCard);
+                            byCustomerNumber.getCards().add(newCard);
+                            customerService.update(session, byCustomerNumber);
+                            accountByAccountNumber.setCard(newCard);
+                            accountService.updateAccount(session, accountByAccountNumber);
+
+                            session.getTransaction().commit();
+                        } else {
+                            throw new AccountIsNotActive("Account is not active");
+                        }
                     } else {
-                        throw new AccountIsNotActive("Account is not active");
+                        throw new AccountHasACArd("This account has an active card");
                     }
 
-                } else {
-                    throw new AccountHasACArd("this account has a active card");
-                }
+                } catch (Exception e) {
+                    e.printStackTrace();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
+                    if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                        session.getTransaction().rollback();
+                    }
+                    throw e;
                 }
-                throw e;
+            } catch (Exception e) {
+
+                e.printStackTrace();
             }
+            return null;
         }
-        return null;
-    }
+
+
 
     private static Card getCreateCard(CardDto card) {
 

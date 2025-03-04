@@ -21,7 +21,6 @@
     </button>
 </form>
 
-
 <form action="/getAccount" method="get" style="display: flex; gap: 8px; align-items: center; margin-top: 15px;">
     <input type="text" name="customerNumber" placeholder="Enter Customer Number" required
            style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">

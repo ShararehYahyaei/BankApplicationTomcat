@@ -12,7 +12,6 @@
                 font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">
         <h3 style="font-size: 20px; color: #444; margin-bottom: 10px; text-align: center;">Account Details</h3>
 
-        <!-- نمایش خطا در صورتی که موجود باشد -->
         <c:if test="${not empty error}">
             <p style="color: red; text-align: center;">${error}</p>
         </c:if>

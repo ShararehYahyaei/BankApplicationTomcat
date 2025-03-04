@@ -38,4 +38,11 @@ public class CardRepositoryImpl implements CardRepository {
                 .uniqueResult();
     }
 
+    @Override
+    public Card findByCardNumber(Session session, String cardNumber) {
+    return     session.createQuery("SELECT c FROM Card c WHERE c.cardNumber = :cardNumber", Card.class)
+                .setParameter("cardNumber", cardNumber)
+                .uniqueResult();
+    }
+
 }
