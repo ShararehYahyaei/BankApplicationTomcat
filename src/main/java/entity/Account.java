@@ -28,7 +28,7 @@ public class Account {
     private boolean isActive;
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
-    @ManyToMany (cascade = CascadeType.ALL)
+    @OneToMany (cascade = CascadeType.ALL)
     private List<Transaction> transactions=new ArrayList<>();
 
     @Override

@@ -49,7 +49,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Account getAccountByCardNumber(Session session, String cardNumber) {
-        return session.createQuery("select  a FROM ACCOUNT a JOIN a.card c WHERE c.cardNumber = :cardNumber ", Account.class)
+        return session.createQuery("SELECT c.account FROM Card c WHERE c.cardNumber = :cardNumber", Account.class)
                 .setParameter("cardNumber", cardNumber).getSingleResult();
     }
 

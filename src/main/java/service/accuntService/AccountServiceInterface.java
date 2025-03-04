@@ -12,7 +12,7 @@ public interface AccountServiceInterface {
     List<Account> findAll();
     List<Account> getAccountsByCustomerNumber(String customerNumber);
     void delete(Account account);
-    void withdraw(TransferDto transferDto);
-    Account getAccountByCardNumber(String cardNumber);
+    void transfer(TransferDto transferDto);
+  //  Account getAccountByCardNumber(   String cardNumber);
     Account getAccountByAccountNumber(String accountNumber);
 }

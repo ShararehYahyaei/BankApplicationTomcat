@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class AccountServiceImpl implements AccountServiceInterface {
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
-    private final TransactionRepository transactionService = new TransactionRepositoryImpl();
+    private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
 
 
     @Override
@@ -114,38 +114,49 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
 
     @Override
-    public void withdraw(TransferDto transferDto) {
+    public void transfer(TransferDto transferDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            session.beginTransaction();
-            Account accountSource = getAccountByCardNumber(transferDto.getCardNumberSource());
-            Account accountDestination = getAccountByCardNumber(transferDto.getCardNumberDestination());
-            accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount());
-            accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
-            Transaction newTransaction = getNewTransaction(transferDto);
-            accountRepository.updateAccount(session, accountSource);
-            accountRepository.updateAccount(session, accountDestination);
-            transactionService.save(session, newTransaction);
-            session.getTransaction().commit();
+            try {
+                session.beginTransaction();
+                Account accountSource = accountRepository.getAccountByCardNumber(session,  transferDto.getCardNumberSource());
+                Account accountDestination = accountRepository.getAccountByCardNumber(session,transferDto.getCardNumberDestination());
+                accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount());
+                accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
+                Transaction newTransaction = new Transaction();
+                newTransaction.setAmount(transferDto.getAmount());
+                newTransaction.setSource(accountSource);
+                newTransaction.setDestination(accountDestination);
+                newTransaction.setType(TransactionType.Transfer);
+                newTransaction.setTransactionDate(LocalDate.now());
 
-        }
-    }
-
-    @Override
-    public Account getAccountByCardNumber(String cardNumber) {
-        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            session.beginTransaction();
-            Account accountByCardNumber = accountRepository.getAccountByCardNumber(session, cardNumber);
-            if (accountByCardNumber != null) {
+                accountRepository.updateAccount(session, accountSource);
+                accountRepository.updateAccount(session, accountDestination);
+                transactionRepository.save(session, newTransaction);
                 session.getTransaction().commit();
-                return accountByCardNumber;
             }
-            throw new AccountNotFoundException("Account not found");
+            catch (Exception e) {
+                e.printStackTrace();
+                session.getTransaction().rollback();
+                System.out.println(e.getMessage());
+            }
+
         }
     }
+
+//    @Override
+//    public Account getAccountByCardNumber(  String cardNumber) {
+//        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+//                Account accountByCardNumber = accountRepository.getAccountByCardNumber(session, cardNumber);
+//                if (accountByCardNumber != null) {
+//                    return accountByCardNumber;
+//                }
+//                throw new AccountNotFoundException("Account not found");
+//        }
+//    }
 
     @Override
     public Account getAccountByAccountNumber(String accountNumber) {
-        try(var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
             session.beginTransaction();
             Account accountByAccountNumber = accountRepository.getAccountByAccountNumber(session, accountNumber);
             if (accountByAccountNumber != null) {
@@ -154,14 +165,6 @@ public class AccountServiceImpl implements AccountServiceInterface {
             }
         }
         throw new AccountNotFoundException("Account not found");
-    }
-
-    private Transaction getNewTransaction(TransferDto transferDto) {
-        Transaction tr = new Transaction();
-        tr.setAmount(transferDto.getAmount());
-        tr.setType(TransactionType.Transfer);
-        tr.setTransactionDate(LocalDate.now());
-        return tr;
     }
 
 }

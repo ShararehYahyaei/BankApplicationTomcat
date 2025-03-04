@@ -1,6 +1,7 @@
 package dto;
 
 import entity.AccountType;
+import entity.Branch;
 import exception.accountException.AccountNumberException;
 import exception.accountException.NegativeBalanceException;
 import exception.customer.*;
@@ -66,6 +67,7 @@ public class CustomerDto {
             errors.add("Customer number cannot be empty.");
 
         }
+
         return errors;
     }
 

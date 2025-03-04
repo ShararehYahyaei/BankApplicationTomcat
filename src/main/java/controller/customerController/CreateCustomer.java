@@ -40,7 +40,10 @@ public class CreateCustomer extends HttpServlet {
             String userName = request.getParameter("userName");
             String password = request.getParameter("password");
             String customerNumber = request.getParameter("customerNumber");
-            CustomerDto customerDto = CustomerDto.builder().fullName(fullName).lastName(lastName).email(email).phone(phone).accountType(accountType).balance(balance).accountNumber(accountNumber).code(code).userName(userName).password(password).customerNumber(customerNumber).build();
+            CustomerDto customerDto = CustomerDto.builder().fullName(fullName).lastName(lastName).email(email).phone(phone).accountType(accountType).balance(balance).accountNumber(accountNumber).code(code)
+                    .userName(userName).password(password)
+                    .customerNumber(customerNumber)
+                   .build();
             Set<String> validate = customerDto.validate();
             if (!validate.isEmpty()) {
                 throw new RuntimeException(String.join("\n", validate));

@@ -9,7 +9,7 @@ import java.util.Optional;
 public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public Transaction save(Session session, Transaction transaction) {
-        session.persist(transaction);
+        session.persist( transaction);
         return transaction;
     }
 
