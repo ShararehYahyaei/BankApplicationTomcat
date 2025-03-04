@@ -38,7 +38,7 @@ public class CardService implements CardServiceInterface {
                 if (accountByAccountNumber.getCard() == null) {
                     if (accountByAccountNumber.isActive()) {
                         newCard.setAccount(accountByAccountNumber);
-                        newCard.setCustomer(byCustomerNumber);
+//                        newCard.setCustomer(byCustomerNumber);
                         cardRepository.save(session, newCard);
                         byCustomerNumber.getCards().add(newCard);
                         customerService.update(session, byCustomerNumber);

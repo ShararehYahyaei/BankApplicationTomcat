@@ -20,9 +20,11 @@ public class Transaction {
     private Long amount;
     private LocalDate transactionDate;
     private TransactionType type;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "destination_id")
     private Account destination;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "source_id")
     private Account source;
 
 }

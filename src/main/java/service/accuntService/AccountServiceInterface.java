@@ -13,6 +13,5 @@ public interface AccountServiceInterface {
     List<Account> getAccountsByCustomerNumber(String customerNumber);
     void delete(Account account);
     void transfer(TransferDto transferDto);
-  //  Account getAccountByCardNumber(   String cardNumber);
-    Account getAccountByAccountNumber(String accountNumber);
+
 }

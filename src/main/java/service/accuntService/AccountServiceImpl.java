@@ -118,10 +118,14 @@ public class AccountServiceImpl implements AccountServiceInterface {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
             try {
                 session.beginTransaction();
-                Account accountSource = accountRepository.getAccountByCardNumber(session,  transferDto.getCardNumberSource());
-                Account accountDestination = accountRepository.getAccountByCardNumber(session,transferDto.getCardNumberDestination());
+                Account accountSource = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberSource());
+                Account accountDestination = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberDestination());
+
+
                 accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount());
                 accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
+
+
                 Transaction newTransaction = new Transaction();
                 newTransaction.setAmount(transferDto.getAmount());
                 newTransaction.setSource(accountSource);
@@ -129,8 +133,16 @@ public class AccountServiceImpl implements AccountServiceInterface {
                 newTransaction.setType(TransactionType.Transfer);
                 newTransaction.setTransactionDate(LocalDate.now());
 
-                accountRepository.updateAccount(session, accountSource);
-                accountRepository.updateAccount(session, accountDestination);
+
+                if (!session.contains(accountSource)) {
+                    accountRepository.updateAccount(session, accountSource);
+
+                }
+                if (!session.contains(accountDestination)) {
+                    accountRepository.updateAccount(session, accountDestination);
+                }
+
+
                 transactionRepository.save(session, newTransaction);
                 session.getTransaction().commit();
             }
@@ -139,32 +151,8 @@ public class AccountServiceImpl implements AccountServiceInterface {
                 session.getTransaction().rollback();
                 System.out.println(e.getMessage());
             }
-
         }
     }
 
-//    @Override
-//    public Account getAccountByCardNumber(  String cardNumber) {
-//        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-//                Account accountByCardNumber = accountRepository.getAccountByCardNumber(session, cardNumber);
-//                if (accountByCardNumber != null) {
-//                    return accountByCardNumber;
-//                }
-//                throw new AccountNotFoundException("Account not found");
-//        }
-//    }
-
-    @Override
-    public Account getAccountByAccountNumber(String accountNumber) {
-        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            session.beginTransaction();
-            Account accountByAccountNumber = accountRepository.getAccountByAccountNumber(session, accountNumber);
-            if (accountByAccountNumber != null) {
-                session.getTransaction().commit();
-                return accountByAccountNumber;
-            }
-        }
-        throw new AccountNotFoundException("Account not found");
-    }
 
 }

@@ -37,6 +37,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Account updateAccount(Session session, Account account) {
         session.merge(account);
         session.flush();
+        session.getTransaction().commit();
         return account;
     }
 
