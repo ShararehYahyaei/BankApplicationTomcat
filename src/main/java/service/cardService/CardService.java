@@ -4,20 +4,25 @@ import config.SessionFactoryInstance;
 import dto.CardDto;
 import entity.Account;
 import entity.Card;
+import entity.Customer;
 import entity.Employee;
+import exception.accountException.AccountHasACArd;
+import exception.accountException.AccountIsNotActive;
 import exception.cardException.CardNotFoundException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 import repository.cardRepository.CardRepository;
 import repository.cardRepository.CardRepositoryImpl;
+import repository.customerRepository.CustomerRepoImpl;
+import repository.customerRepository.CustomerRepository;
 
-import javax.smartcardio.CardNotPresentException;
 import java.util.List;
 import java.util.Optional;
 
 public class CardService implements CardServiceInterface {
     private final CardRepository cardRepository = new CardRepositoryImpl();
     private final AccountRepository accountService = new AccountRepositoryImpl();
+    private final CustomerRepository customerService = new CustomerRepoImpl();
 
 
     @Override
@@ -27,18 +32,33 @@ public class CardService implements CardServiceInterface {
             try {
                 session.beginTransaction();
                 Card newCard = getCreateCard(card);
-                Account accountByCustomerNumber = accountService.getAccountByCustomerNumber(session, card.getCustomerNumber());
-                accountByCustomerNumber.setCard(newCard);
-                newCard.setAccount(accountByCustomerNumber);
-                accountService.save(session, accountByCustomerNumber);
-                accountService.save(session, accountByCustomerNumber);
-                cardRepository.save(session, newCard);
-                session.getTransaction().commit();
-                return newCard;
+                String customerNumber = card.getCustomerNumber();
+                Customer byCustomerNumber = customerService.findByCustomerNumber(session, customerNumber);
+                Account accountByAccountNumber = accountService.getAccountByAccountNumber(session, card.getAccountNumber());
+                if (accountByAccountNumber.getCard() == null) {
+                    if (accountByAccountNumber.isActive()) {
+                        newCard.setAccount(accountByAccountNumber);
+                        newCard.setCustomer(byCustomerNumber);
+                        cardRepository.save(session, newCard);
+                        byCustomerNumber.getCards().add(newCard);
+                        customerService.update(session, byCustomerNumber);
+                        accountByAccountNumber.setCard(newCard);
+                        accountService.updateAccount(session, accountByAccountNumber);
+                        session.getTransaction().commit();
+                    } else {
+                        throw new AccountIsNotActive("Account is not active");
+                    }
+
+                } else {
+                    throw new AccountHasACArd("this account has a active card");
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                session.getTransaction().rollback();
+                if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                    session.getTransaction().rollback();
+                }
+                throw e;
             }
         }
         return null;

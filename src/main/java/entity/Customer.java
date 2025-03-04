@@ -3,6 +3,9 @@ package entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -32,13 +35,13 @@ public class Customer {
                 '}';
     }
 
-    @OneToOne
-    private Account account;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts = new ArrayList<>();
     @ManyToOne
     private Branch branch;
-
-
-    public Customer(String fullName,String lastName, String email, String phone) {
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Card> cards = new ArrayList<>();
+    public Customer(String fullName, String lastName, String email, String phone) {
         this.fullName = fullName;
         this.lastName = lastName;
         this.email = email;

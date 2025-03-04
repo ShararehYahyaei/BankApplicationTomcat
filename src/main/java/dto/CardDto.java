@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -20,25 +22,33 @@ public class CardDto {
     private LocalDate expiryDate;
     private String password;
     private String customerNumber;
+    private String accountNumber;
     public void validate() {
+        Set<String> errors = new HashSet<>();
         if (cardNumber == null || !cardNumber.matches("\\d{16}")) {
-            throw new CardNumbers("Card number must be 16 digits.");
+            errors.add("Card number must be 16 digits.");
+
         }
 
         if (cvv2 == null || !cvv2.matches("\\d{3}")) {
-            throw new CardCvvNumbers("CVV2 must be 3 digits.");
+            errors.add("CVV2 must be 3 digits.");
         }
 
         if (expiryDate == null || expiryDate.isBefore(LocalDate.now())) {
-            throw new CardIsExpired("Expiry date must be in the future.");
+            errors.add("Expiry date must be in the future.");
+
         }
 
         if (password == null || password.length() < 4 || password.length() > 6) {
-            throw new CardPassword("Card password must be between 4 and 6 digits.");
+            errors.add("Card password must be between 4 and 6 digits.");
         }
 
         if (customerNumber == null || customerNumber.isEmpty()) {
-            throw new CustomerNumberNotBlank("Customer number cannot be empty.");
+            errors.add("Customer number cannot be empty.");
+
+        }
+        if (accountNumber == null || accountNumber.isEmpty()) {
+            errors.add("Account number must be between 10 and 20 digits..");
         }
     }
 

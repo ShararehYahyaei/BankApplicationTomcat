@@ -34,12 +34,14 @@ public class CreateCard extends HttpServlet {
             String password = req.getParameter("password");
             String customerNumber = req.getParameter("customerNumber");
             LocalDate expiryDate = LocalDate.parse(expiryDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String accountNumber = req.getParameter("accountNumber");
             CardDto cardDto = CardDto.builder()
                     .cardNumber(cardNumber)
                     .cvv2(cvv2)
                     .expiryDate(expiryDate)
                     .password(password)
                     .customerNumber(customerNumber)
+                    .accountNumber(accountNumber)
                     .build();
             cardDto.validate();
             cardService.save(cardDto);

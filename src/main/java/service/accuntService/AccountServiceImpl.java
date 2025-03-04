@@ -3,16 +3,15 @@ package service.accuntService;
 import config.SessionFactoryInstance;
 import dto.TransferDto;
 import entity.Account;
-import entity.Card;
+import entity.Transaction;
+import entity.TransactionType;
+
 import exception.accountException.AccountNotFoundException;
-import exception.accountException.CardIsNotActiveException;
-import exception.accountException.InsufficientBalanceException;
-import exception.cardException.CardIsExpired;
-import exception.cardException.CardNotFoundException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
-import repository.cardRepository.CardRepository;
-import repository.cardRepository.CardRepositoryImpl;
+
+import repository.transactionRepository.TransactionRepository;
+import repository.transactionRepository.TransactionRepositoryImpl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Optional;
 
 public class AccountServiceImpl implements AccountServiceInterface {
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
-    private final CardRepository cardRepository = new CardRepositoryImpl();
+    private final TransactionRepository transactionService = new TransactionRepositoryImpl();
 
 
     @Override
@@ -78,28 +77,18 @@ public class AccountServiceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public Account update(Account account) {
+    public List<Account> getAccountsByCustomerNumber(String customerNumber) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
-            try {
-                session.beginTransaction();
-                Optional<Account> found = accountRepository.findById(session, account.getId());
-                if (found.isPresent()) {
-                    found.get().setBalance(account.getBalance());
-                    found.get().setActive(account.isActive());
-                    accountRepository.save(session, found.get());
-                } else {
-                    System.out.println("Account not found");
-                    session.getTransaction().rollback();
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            session.beginTransaction();
+            List<Account> accounts = accountRepository.getAccountsByCustomerNumber(session, customerNumber);
+            if (accounts.isEmpty()) {
                 session.getTransaction().rollback();
-
+                throw new AccountNotFoundException("Accounts not found");
             }
+            session.getTransaction().commit();
+            return accounts;
         }
-        return null;
     }
 
     @Override
@@ -123,78 +112,56 @@ public class AccountServiceImpl implements AccountServiceInterface {
         }
     }
 
-    @Override
-    public Account getAccountByCustomerNumber(String customerNumber) {
-        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-
-            try {
-                session.beginTransaction();
-                return accountRepository.getAccountByCustomerNumber(session, customerNumber);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-        return null;
-    }
-
-    @Override
-    public Account updateAccount(Account account) {
-        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                accountRepository.updateAccount(session, account);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }
-            return account;
-        }
-    }
 
     @Override
     public void withdraw(TransferDto transferDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
             session.beginTransaction();
+            Account accountSource = getAccountByCardNumber(transferDto.getCardNumberSource());
+            Account accountDestination = getAccountByCardNumber(transferDto.getCardNumberDestination());
+            accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount());
+            accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
+            Transaction newTransaction = getNewTransaction(transferDto);
+            accountRepository.updateAccount(session, accountSource);
+            accountRepository.updateAccount(session, accountDestination);
+            transactionService.save(session, newTransaction);
+            session.getTransaction().commit();
 
-            try {
+        }
+    }
 
-                Card card = cardRepository.getCardExpirationDate(session, transferDto.getCustomerNumber());
-                Account account = accountRepository.getAccountByCustomerNumber(session, transferDto.getCustomerNumber());
-
-                if (account == null) {
-                    throw new AccountNotFoundException("حسابی با این شماره مشتری یافت نشد!");
-                }
-                if (card == null) {
-                    throw new CardNotFoundException("کارت مربوط به این حساب یافت نشد!");
-                }
-
-
-                if (!account.isActive()) {
-                    throw new CardIsNotActiveException("حساب غیرفعال است!");
-                }
-
-
-                if (!card.getExpiryDate().isAfter(LocalDate.now())) {
-                    throw new CardIsExpired("کارت منقضی شده است!");
-                }
-
-
-                if (account.getBalance() < transferDto.getAmount()) {
-                    throw new InsufficientBalanceException("موجودی حساب کافی نیست!");
-                }
-
-                account.setBalance(account.getBalance() - transferDto.getAmount());
-                accountRepository.updateAccount(session, account);
+    @Override
+    public Account getAccountByCardNumber(String cardNumber) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            Account accountByCardNumber = accountRepository.getAccountByCardNumber(session, cardNumber);
+            if (accountByCardNumber != null) {
                 session.getTransaction().commit();
+                return accountByCardNumber;
+            }
+            throw new AccountNotFoundException("Account not found");
+        }
+    }
 
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-
+    @Override
+    public Account getAccountByAccountNumber(String accountNumber) {
+        try(var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            Account accountByAccountNumber = accountRepository.getAccountByAccountNumber(session, accountNumber);
+            if (accountByAccountNumber != null) {
+                session.getTransaction().commit();
+                return accountByAccountNumber;
             }
         }
+        throw new AccountNotFoundException("Account not found");
+    }
+
+    private Transaction getNewTransaction(TransferDto transferDto) {
+        Transaction tr = new Transaction();
+        tr.setAmount(transferDto.getAmount());
+        tr.setType(TransactionType.Transfer);
+        tr.setTransactionDate(LocalDate.now());
+        return tr;
     }
 
 }

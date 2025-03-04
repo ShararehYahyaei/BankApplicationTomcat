@@ -10,6 +10,7 @@ import service.accuntService.AccountServiceImpl;
 import service.accuntService.AccountServiceInterface;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/getAccount")
 public class GetAccount extends HttpServlet {
@@ -17,20 +18,20 @@ public class GetAccount extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String customerNumber = req.getParameter("customerNumber");
-        if (customerNumber == null || customerNumber.trim().isEmpty()) {
-            req.setAttribute("error", "Customer Number is required!");
+        try {
+            String customerNumber = req.getParameter("customerNumber");
+            if (customerNumber == null || customerNumber.trim().isEmpty()) {
+                req.setAttribute("error", "Customer Number is required!");
+                req.getRequestDispatcher("/getAccount.jsp").forward(req, resp);
+                return;
+            }
+            List<Account> accounts = accountService.getAccountsByCustomerNumber(customerNumber);
+                req.setAttribute("accountByCustomerNumber", accounts);
             req.getRequestDispatcher("/getAccount.jsp").forward(req, resp);
-            return;
+        } catch (Exception e) {
+            req.setAttribute("error", e.getMessage());
+            req.getRequestDispatcher("/getAccount.jsp").forward(req, resp);
+            e.printStackTrace();
         }
-
-
-        Account accountByCustomerNumber = accountService.getAccountByCustomerNumber(customerNumber);
-        if (accountByCustomerNumber == null) {
-            req.setAttribute("error", "No Account found with this number!");
-        } else {
-            req.setAttribute("accountByCustomerNumber", accountByCustomerNumber);
-        }
-        req.getRequestDispatcher("/getAccount.jsp").forward(req, resp);
     }
 }

@@ -28,4 +28,10 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     public void delete(Session session, Transaction transaction) {
         session.delete(transaction);
     }
+
+    @Override
+    public Transaction update(Session session, Transaction transaction) {
+        session.update(transaction);
+        return transaction;
+    }
 }

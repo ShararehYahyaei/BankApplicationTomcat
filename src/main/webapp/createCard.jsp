@@ -67,6 +67,7 @@
         <input type="date" name="expiryDate" placeholder="Expiry Date" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="text" name="customerNumber" placeholder="Customer Number" required>
+        <input type="text" name="accountNumber" placeholder="account Number" required>
         <button type="submit">Submit</button>
     </form>
 

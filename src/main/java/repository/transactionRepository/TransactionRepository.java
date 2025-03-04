@@ -14,4 +14,5 @@ public interface TransactionRepository {
     List<Transaction> findAll(Session session);
 
     void delete(Session session, Transaction transaction);
+    Transaction update(Session session, Transaction transaction);
 }

@@ -19,8 +19,10 @@ public class Card {
     private String cvv2;
     private LocalDate expiryDate;
     private String password;
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     private Account account;
+    @ManyToOne (cascade = CascadeType.ALL)
+    private Customer customer;
 
     public Card(String cardNumber, String cvv2, LocalDate expiryDate, String password, String customerNumber) {
         this.cardNumber = cardNumber;

@@ -62,6 +62,12 @@ public class CustomerRepoImpl implements CustomerRepository {
                 .uniqueResult();
     }
 
+    @Override
+    public Customer update(Session session, Customer customer) {
+        session.merge(customer);
+        session.flush();
+        return customer;
+    }
 
 
 }

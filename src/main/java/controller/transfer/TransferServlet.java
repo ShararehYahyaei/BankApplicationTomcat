@@ -19,49 +19,67 @@ public class TransferServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("doGet");
         req.getRequestDispatcher("/transfer.jsp").forward(req, resp);
+        System.out.println("doGetAfterTransfer");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cardNumberSource = req.getParameter("cardNumberSource");
-        String cardNumberDestination = req.getParameter("cardNumberDestination");
-        String balanceStr = req.getParameter("amount");
-        Long amount = null;
-        if (balanceStr != null && !balanceStr.trim().isEmpty()) {
+        System.out.println("doPost");
+
+        try {
+            String cardNumberSource = req.getParameter("cardNumberSource");
+            String cardNumberDestination = req.getParameter("cardNumberDestination");
+            String balanceStr = req.getParameter("amount");
+
+            Long amount = null;
+            if (balanceStr != null && !balanceStr.trim().isEmpty()) {
+                try {
+                    amount = Long.parseLong(balanceStr.trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid balance format: " + balanceStr);
+                    resp.setStatus(400);
+                    resp.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
+                    return;
+                }
+            }
+
+            String cvv2 = req.getParameter("cvv2");
+            String expiryDate = req.getParameter("expiryDate");
+            LocalDate expiryDateParsed = null;
+
             try {
-                amount = Long.parseLong(balanceStr.trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid balance format: " + balanceStr);
+                expiryDateParsed = LocalDate.parse(expiryDate);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format: " + expiryDate);
                 resp.setStatus(400);
-                resp.getWriter().write("{\"error\": \"Invalid balance format provided\"}");
+                resp.getWriter().write("{\"error\": \"Invalid date format provided\"}");
                 return;
             }
-        }
-        String cvv2 = req.getParameter("cvv2");
-        String expiryDate = req.getParameter("expiryDate");
-        LocalDate expiryDateParsed = null;
-        try {
-            expiryDateParsed = LocalDate.parse(expiryDate);
 
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format: " + expiryDate);
-            resp.setStatus(400);
-            resp.getWriter().write("{\"error\": \"Invalid date format provided\"}");
+            String password = req.getParameter("password");
+            String customerNumber = req.getParameter("customerNumber");
+
+            TransferDto dtoT = new TransferDto();
+            dtoT.setCardNumberSource(cardNumberSource);
+            dtoT.setCardNumberDestination(cardNumberDestination);
+            dtoT.setAmount(amount);
+            dtoT.setCvv2(cvv2);
+            dtoT.setExpiryDate(expiryDateParsed);
+            dtoT.setPassword(password);
+            dtoT.setCustomerNumber(customerNumber);
+
+            accountService.withdraw(dtoT);
+
+            req.setAttribute("message", "Transfer saved successfully..");
+            req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        } catch (Exception e) {
+            System.out.println("Error processing transfer: " + e.getMessage());
+            resp.setStatus(500);
+            resp.getWriter().write("{\"error\": \"Internal Server Error\"}");
         }
-        String password = req.getParameter("password");
-        String customerNumber = req.getParameter("customerNumber");
-        TransferDto dtoT = new TransferDto();
-        dtoT.setCardNumberSource(cardNumberSource);
-        dtoT.setCardNumberDestination(cardNumberDestination);
-        dtoT.setAmount(amount);
-        dtoT.setCvv2(cvv2);
-        dtoT.setExpiryDate(expiryDateParsed);
-        dtoT.setPassword(password);
-        dtoT.setCustomerNumber(customerNumber);
-        accountService.withdraw(dtoT);
-        req.setAttribute("message", "Transfer saved successfully..");
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
 
     }
+
 }

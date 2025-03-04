@@ -1,10 +1,12 @@
 package config;
 
 import entity.*;
+import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class SessionFactoryInstance {
+    @Getter
     private static final SessionFactory sessionFactory;
 
     static {
@@ -19,7 +21,4 @@ public class SessionFactoryInstance {
                 .buildSessionFactory();
     }
 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
 }

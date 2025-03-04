@@ -9,10 +9,17 @@ import java.util.Optional;
 
 public interface AccountRepository {
     Account save(Session session, Account account);
-    Optional<Account> findById(Session session, Long id);
-    List<Account> findAll(Session session);
-    void delete(Session session, Account account);
-    Account getAccountByCustomerNumber(Session session, String customerNumber);
-    Account updateAccount(Session session, Account account);
 
+    Optional<Account> findById(Session session, Long id);
+
+    List<Account> findAll(Session session);
+
+    void delete(Session session, Account account);
+
+    Account updateAccount(Session session, Account account);
+    List<Account> getAccountsByCustomerNumber(Session session, String customerNumber);
+    Account getAccountByCardNumber (Session session, String cardNumber);
+    Account getAccountByAccountNumber (Session session, String accountNumber);
 }
+
+

@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         account.setActive(true);
         account.setAccountNumber(customerDto.getAccountNumber());
         account.setBranch(branch);
-        customer.setAccount(account);
+        customer.getAccounts().add(account);
         return account;
     }
 
@@ -134,6 +134,10 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                     found.get().setLastName(customer.getLastName());
                     found.get().setEmail(customer.getEmail());
                     found.get().setPhone(customer.getPhone());
+                    found.get().setBranch(customer.getBranch());
+                    found.get().setUserName(customer.getUserName());
+                    found.get().setPassword(customer.getPassword());
+                    found.get().setCustomerNumber(customer.getCustomerNumber());
                     customerRepository.save(session, found.get());
                     session.getTransaction().commit();
                     return found.get();

@@ -2,24 +2,17 @@ package service.accuntService;
 
 import dto.TransferDto;
 import entity.Account;
-import entity.Customer;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AccountServiceInterface {
     Account save(Account account);
-
     Optional<Account> findById(Long id);
-
     List<Account> findAll();
-
-    Account update(Account account);
-
+    List<Account> getAccountsByCustomerNumber(String customerNumber);
     void delete(Account account);
-    Account getAccountByCustomerNumber(String customerNumber);
-    Account updateAccount(Account account);
-
-
     void withdraw(TransferDto transferDto);
+    Account getAccountByCardNumber(String cardNumber);
+    Account getAccountByAccountNumber(String accountNumber);
 }
