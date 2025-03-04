@@ -28,8 +28,11 @@ public class Account {
     private boolean isActive;
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
-    @OneToMany (cascade = CascadeType.ALL)
-    private List<Transaction> transactions=new ArrayList<>();
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    private List<Transaction> transactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "source", cascade = CascadeType.ALL )
+    private List<Transaction> anotherTransactions = new ArrayList<>();
 
     @Override
     public String toString() {

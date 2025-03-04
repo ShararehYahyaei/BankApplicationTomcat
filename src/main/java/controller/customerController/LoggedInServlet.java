@@ -30,6 +30,7 @@ public class LoggedInServlet extends HttpServlet {
             Customer byCustomerNumber = customerService.login(userName, password);
             resp.setStatus(200);
             req.setAttribute("byCustomerNumber", byCustomerNumber);
+            req.getSession().setAttribute("userId", byCustomerNumber.getId());
             req.getRequestDispatcher("/profile.jsp").forward(req, resp);
 
         } catch (Exception e) {

@@ -50,7 +50,8 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 customer.getAccounts().add(account);
                 Customer saveCustomer = customerRepository.save(session, customer);
                 accountRepository.save(session, account);
-                Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).source(null).destination(account).build();
+                Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance())
+                        .destination(account).build();
                 transactionService.save(session, transaction);
                 session.getTransaction().commit();
                 return saveCustomer;
@@ -244,4 +245,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
         }
     }
+
+
+
 }
