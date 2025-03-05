@@ -17,5 +17,5 @@ public interface CustomerRepository {
     Customer isEmailExist( Session session,  String email);
     Customer update(Session session, Customer customer);
     boolean isCustomerNumber(Session session, String customerNumber);
-
+    Optional<Customer> findByPassword(Session session,  String oldPassword);
 }

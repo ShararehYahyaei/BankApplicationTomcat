@@ -31,5 +31,6 @@ public interface CustomerServiceInter {
 
     boolean isCustomerNumber(String customerNumber);
 
+    Optional<Customer> findByPassword(String oldPassword);
 
 }

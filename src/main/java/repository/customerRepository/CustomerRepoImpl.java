@@ -78,5 +78,12 @@ public class CustomerRepoImpl implements CustomerRepository {
         return customerNumber1 != null;
     }
 
+    @Override
+    public Optional<Customer> findByPassword(Session session, String oldPassword) {
+        Customer customer = session.createQuery("FROM Customer c WHERE c.password = :password", Customer.class)
+                .setParameter("password", oldPassword)
+                .uniqueResult();
+        return Optional.ofNullable(customer);
+    }
 
 }

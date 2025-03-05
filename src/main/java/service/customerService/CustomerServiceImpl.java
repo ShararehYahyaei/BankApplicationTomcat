@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 if (isEmailExist(customerDto.getEmail()) != null) {
                     throw new UsernameAlreadyExistsException("Email already exists");
                 }
-                boolean customerNumber =customerRepository.isCustomerNumber(session,customerDto.getCustomerNumber()) ;
+                boolean customerNumber = customerRepository.isCustomerNumber(session, customerDto.getCustomerNumber());
                 if (customerNumber) {
                     throw new CustomerNumberIsAlreadyExisted("Customer number already exists");
                 }
@@ -266,5 +266,16 @@ public class CustomerServiceImpl implements CustomerServiceInter {
             }
         }
         return false;
+    }
+
+    @Override
+    public Optional<Customer> findByPassword(String oldPassword) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            Optional<Customer> byPassword = customerRepository.findByPassword(session, oldPassword);
+            if (byPassword.isPresent()) {
+                return byPassword;
+            }
+        }
+        return null;
     }
 }
