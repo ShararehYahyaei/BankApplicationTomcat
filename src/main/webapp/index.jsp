@@ -17,8 +17,9 @@
            style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
     <button type="submit" style="padding: 10px 15px; background: #52a883; color: white;
     text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
-        Show Customer
+   Create Card For Customer
     </button>
+
 </form>
 
 <form action="/getAccount" method="get" style="display: flex; gap: 8px; align-items: center; margin-top: 15px;">
@@ -27,6 +28,14 @@
     <button type="submit" style="padding: 10px 15px; background: #52a883; color: white;
     text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
         Show Account
+    </button>
+</form>
+<form action="/createAccount" method="post" style="display: flex; gap: 8px; align-items: center; margin-top: 15px;">
+    <input type="text" name="customerNumber" placeholder="Enter Customer Number" required
+           style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+    <button type="submit" style="padding: 10px 15px; background: #52a883; color: white;
+    text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
+        Create Account for Customer
     </button>
 </form>
 
