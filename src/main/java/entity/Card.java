@@ -11,6 +11,10 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(
+        name = "card",
+        uniqueConstraints = @UniqueConstraint(columnNames = "cardNumber")
+)
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +25,6 @@ public class Card {
     private String password;
     @OneToOne (cascade = CascadeType.ALL)
     private Account account;
-    private int failedAttempts;
-    private boolean isBlocked;
 
     public Card(String cardNumber, String cvv2, LocalDate expiryDate, String password, String customerNumber) {
         this.cardNumber = cardNumber;

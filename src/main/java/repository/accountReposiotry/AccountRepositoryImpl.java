@@ -37,7 +37,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Account updateAccount(Session session, Account account) {
         session.merge(account);
         session.flush();
-        session.getTransaction().commit();
         return account;
     }
 
@@ -59,6 +58,14 @@ public class AccountRepositoryImpl implements AccountRepository {
         return session.createQuery("SELECT a FROM Account a WHERE a.accountNumber = :accountNumber", Account.class)
                 .setParameter("accountNumber", accountNumber).getSingleResult();
 
+    }
+
+    @Override
+    public boolean isAccountNumberExisted(Session session, String accountNumber) {
+        session.createQuery("SELECT 1 FROM Account a WHERE a.accountNumber = :accountNumber", Account.class)
+                .setParameter("accountNumber", accountNumber)
+                .getSingleResult();
+        return true;
     }
 
 

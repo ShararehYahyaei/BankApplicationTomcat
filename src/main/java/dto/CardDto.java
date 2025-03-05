@@ -5,6 +5,7 @@ import exception.cardException.CardIsExpired;
 import exception.cardException.CardNumbers;
 import exception.cardException.CardPassword;
 import exception.customer.CustomerNumberNotBlank;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

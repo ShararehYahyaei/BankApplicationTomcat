@@ -16,5 +16,6 @@ public interface CustomerRepository {
     Customer isUsernameExist(Session session,  String username);
     Customer isEmailExist( Session session,  String email);
     Customer update(Session session, Customer customer);
+    Customer isCustomerNumber(Session session,  String customerNumber);
 
 }

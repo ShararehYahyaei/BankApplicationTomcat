@@ -20,6 +20,7 @@ public interface AccountRepository {
     List<Account> getAccountsByCustomerNumber(Session session, String customerNumber);
     Account getAccountByCardNumber (Session session, String cardNumber);
     Account getAccountByAccountNumber (Session session, String accountNumber);
+    boolean isAccountNumberExisted(Session session ,String accountNumber);
 }
 
 

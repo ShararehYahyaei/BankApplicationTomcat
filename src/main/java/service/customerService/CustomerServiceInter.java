@@ -20,6 +20,7 @@ public interface CustomerServiceInter {
     Customer isUsernameExist(String username);
     Customer isEmailExist(  String email);
     Customer login (String customerNumber, String password);
+    Customer isCustomerNumber(String customerNumber);
 
 
 }

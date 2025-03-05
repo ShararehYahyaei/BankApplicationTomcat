@@ -43,6 +43,9 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 if (isEmailExist(customerDto.getEmail()) != null) {
                     throw new UsernameAlreadyExistsException("Email already exists");
                 }
+                if (isCustomerNumber(customerDto.getCustomerNumber()) != null) {
+                    throw new UsernameAlreadyExistsException("Customer number already exists");
+                }
 
                 Branch branch = branchService.findByCode(customerDto.getCode());
                 Customer customer = createCustomer(customerDto, branch);
@@ -246,6 +249,22 @@ public class CustomerServiceImpl implements CustomerServiceInter {
         }
     }
 
+    @Override
+    public Customer isCustomerNumber(String customerNumber) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+                Customer isCustomerNumber = customerRepository.isCustomerNumber(session, customerNumber);
+                session.getTransaction().commit();
+                return isCustomerNumber;
+
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+
+            }
+        }
+        return null;
+    }
 
 
 }

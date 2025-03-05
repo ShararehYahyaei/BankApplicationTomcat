@@ -69,6 +69,12 @@ public class CustomerRepoImpl implements CustomerRepository {
         return customer;
     }
 
+    @Override
+    public Customer isCustomerNumber(Session session, String customerNumber) {
+        return session.createQuery("FROM Customer c WHERE c.customerNumber = :customerNumber", Customer.class)
+                .setParameter("customerNumber", customerNumber)
+                .uniqueResult();
+    }
 
 
 }
