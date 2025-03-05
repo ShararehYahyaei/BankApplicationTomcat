@@ -158,6 +158,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
             if (sourceCard.getIncorrectPassword() > 3) {
                 sourceCard.setActive(false);
+                cardRepository.updateCard(session, sourceCard);
             }
 
             if (!sourceCard.isActive() || !destinationCard.isActive()) {
