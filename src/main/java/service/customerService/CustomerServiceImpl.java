@@ -45,34 +45,32 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 if (isEmailExist(customerDto.getEmail()) != null) {
                     throw new UsernameAlreadyExistsException("Email already exists");
                 }
-                boolean customerNumber = isCustomerNumber(customerDto.getCustomerNumber());
+                boolean customerNumber =customerRepository.isCustomerNumber(session,customerDto.getCustomerNumber()) ;
                 if (customerNumber) {
                     throw new CustomerNumberIsAlreadyExisted("Customer number already exists");
-                } else {
-                    Branch branch = branchService.findByCode(customerDto.getCode());
-                    Customer customer = createCustomer(customerDto, branch);
-                    String accountNumber = customerDto.getAccountNumber();
-                    boolean accountNumberExisted = accountRepository.isAccountNumberExisted(session, accountNumber);
-                    if (accountNumberExisted) {
-                        throw new AccountAlreadyExisted("Account already exists");
-                    } else {
-                        Account account = createAccount(customerDto, customer, branch);
-                        customer.getAccounts().add(account);
-                        Customer saveCustomer = customerRepository.save(session, customer);
-                        accountRepository.save(session, account);
-                        Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).destination(account).build();
-                        transactionService.save(session, transaction);
-                        session.getTransaction().commit();
-                        return saveCustomer;
-
-                    }
-
                 }
+                boolean accountNumberExisted = accountRepository.isAccountNumberExisted(session, customerDto.getAccountNumber());
+                if (accountNumberExisted) {
+                    throw new AccountAlreadyExisted("Account already exists");
+                }
+                Branch branch = branchService.findByCode(customerDto.getCode());
+                Customer customer = createCustomer(customerDto, branch);
+                Account account = createAccount(customerDto, customer, branch);
+                customer.getAccounts().add(account);
+                Customer saveCustomer = customerRepository.save(session, customer);
+                accountRepository.save(session, account);
+                Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).destination(account).build();
+                transactionService.save(session, transaction);
+                session.getTransaction().commit();
+                return saveCustomer;
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
                 throw e;
             }
+
         }
     }
 

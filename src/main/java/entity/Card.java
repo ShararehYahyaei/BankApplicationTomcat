@@ -11,10 +11,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(
-        name = "card",
-        uniqueConstraints = @UniqueConstraint(columnNames = "cardNumber")
-)
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

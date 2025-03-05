@@ -42,18 +42,19 @@ public class AccountServiceImpl implements AccountServiceInterface {
 
             try {
                 session.beginTransaction();
-                Account account = createAccountForExistedCustomer(accountdto);
-                Customer byCustomerNumber = customerRepository.findByCustomerNumber(session, accountdto.getCustomerNumber());
-                account.setCustomer(byCustomerNumber);
-                if (isAccountNumberExisted(accountdto.getCustomerNumber())) {
-                    throw new AccountAlreadyExisted("Account already existed");
-
+                boolean accountNumberExisted = accountRepository.isAccountNumberExisted(session, accountdto.getAccountNumber());
+                if (accountNumberExisted) {
+                    throw new AccountAlreadyExisted("this account already existed");
+                } else {
+                    Account account = createAccountForExistedCustomer(accountdto);
+                    Customer byCustomerNumber = customerRepository.findByCustomerNumber(session, accountdto.getCustomerNumber());
+                    account.setCustomer(byCustomerNumber);
+                    Account saveAccount = accountRepository.save(session, account);
+                    byCustomerNumber.getAccounts().add(account);
+                    customerRepository.update(session, byCustomerNumber);
+                    session.getTransaction().commit();
+                    return saveAccount;
                 }
-                Account saveAccount = accountRepository.save(session, account);
-                byCustomerNumber.getAccounts().add(account);
-                customerRepository.update(session, byCustomerNumber);
-                session.getTransaction().commit();
-                return saveAccount;
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
