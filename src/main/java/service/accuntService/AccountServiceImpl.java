@@ -156,7 +156,7 @@ public class AccountServiceImpl implements AccountServiceInterface {
             Account accountSource = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberSource());
             Account accountDestination = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberDestination());
 
-            if (sourceCard.getIncorrectPassword() > 3) {
+            if (sourceCard.getIncorrectPassword() >= 3) {
                 sourceCard.setActive(false);
                 cardRepository.updateCard(session, sourceCard);
             }
