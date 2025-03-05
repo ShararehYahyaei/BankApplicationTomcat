@@ -1,7 +1,6 @@
 package service.cardService;
 
 import dto.CardDto;
-import entity.Account;
 import entity.Card;
 
 import java.util.List;
@@ -15,4 +14,7 @@ public interface CardServiceInterface {
     List<Card> findAll();
 
     void delete(Card card);
+
+    Card UpdateCard(Card card);
+    Card findByCardNumber(String cardNumber);
 }

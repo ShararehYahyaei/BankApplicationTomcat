@@ -27,46 +27,45 @@ public class CardService implements CardServiceInterface {
 
     @Override
     public Card save(CardDto card) {
-            try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-                session.beginTransaction();
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            session.beginTransaction();
 
-                try {
-                    Card newCard = getCreateCard(card);
-                    String customerNumber = card.getCustomerNumber();
-                    Customer byCustomerNumber = customerService.findByCustomerNumber(session, customerNumber);
-                    Account accountByAccountNumber = accountService.getAccountByAccountNumber(session, card.getAccountNumber());
+            try {
+                Card newCard = getCreateCard(card);
+                String customerNumber = card.getCustomerNumber();
+                Customer byCustomerNumber = customerService.findByCustomerNumber(session, customerNumber);
+                Account accountByAccountNumber = accountService.getAccountByAccountNumber(session, card.getAccountNumber());
 
-                    if (accountByAccountNumber.getCard() == null) {
-                        if (accountByAccountNumber.isActive()) {
-                            newCard.setAccount(accountByAccountNumber);
-                            cardRepository.save(session, newCard);
-                            byCustomerNumber.getCards().add(newCard);
-                            customerService.update(session, byCustomerNumber);
-                            accountByAccountNumber.setCard(newCard);
-                            accountService.updateAccount(session, accountByAccountNumber);
-                            session.getTransaction().commit();
-                        } else {
-                            throw new AccountIsNotActive("Account is not active");
-                        }
+                if (accountByAccountNumber.getCard() == null) {
+                    if (accountByAccountNumber.isActive()) {
+                        newCard.setAccount(accountByAccountNumber);
+                        cardRepository.save(session, newCard);
+                        byCustomerNumber.getCards().add(newCard);
+                        customerService.update(session, byCustomerNumber);
+                        accountByAccountNumber.setCard(newCard);
+                        accountService.updateAccount(session, accountByAccountNumber);
+                        session.getTransaction().commit();
                     } else {
-                        throw new AccountHasACArd("This account has an active card");
+                        throw new AccountIsNotActive("Account is not active");
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                    if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                        session.getTransaction().rollback();
-                    }
-                    throw e;
+                } else {
+                    throw new AccountHasACArd("This account has an active card");
                 }
+
             } catch (Exception e) {
-
                 e.printStackTrace();
-            }
-            return null;
-        }
 
+                if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                    session.getTransaction().rollback();
+                }
+                throw e;
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     private static Card getCreateCard(CardDto card) {
@@ -141,4 +140,26 @@ public class CardService implements CardServiceInterface {
         }
 
     }
+
+    @Override
+    public Card UpdateCard(Card card) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            cardRepository.updateCard(session, card);
+            session.getTransaction().commit();
+            return card;
+        }
+    }
+
+    @Override
+    public Card findByCardNumber(String cardNumber) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            Card byCardNumber = cardRepository.findByCardNumber(session, cardNumber);
+            if (byCardNumber != null) {
+                return byCardNumber;
+            }
+        }
+        return null;
+    }
+
 }
