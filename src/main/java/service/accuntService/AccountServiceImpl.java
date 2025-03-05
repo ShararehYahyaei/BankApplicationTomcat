@@ -1,6 +1,7 @@
 package service.accuntService;
 
 import config.SessionFactoryInstance;
+import dto.AccountDto;
 import dto.TransferDto;
 import entity.*;
 
@@ -8,6 +9,8 @@ import exception.accountException.AccountNotFoundException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 
+import repository.customerRepository.CustomerRepoImpl;
+import repository.customerRepository.CustomerRepository;
 import repository.transactionRepository.TransactionRepository;
 import repository.transactionRepository.TransactionRepositoryImpl;
 
@@ -18,15 +21,21 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountServiceInterface {
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
+    private final CustomerRepository customerRepository = new CustomerRepoImpl();
 
 
     @Override
-    public Account save(Account account) {
+    public Account save(AccountDto accountdto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
 
             try {
                 session.beginTransaction();
+                Account account = createAccountForExistedCustomer(accountdto);
+                Customer byCustomerNumber = customerRepository.findByCustomerNumber(session, accountdto.getCustomerNumber());
+                account.setCustomer(byCustomerNumber);
                 Account saveAccount = accountRepository.save(session, account);
+                byCustomerNumber.getAccounts().add(account);
+                customerRepository.update(session, byCustomerNumber);
                 session.getTransaction().commit();
                 return saveAccount;
             } catch (Exception e) {
@@ -36,6 +45,14 @@ public class AccountServiceImpl implements AccountServiceInterface {
             }
         }
         return null;
+    }
+
+    private static Account createAccountForExistedCustomer(AccountDto accountdto) {
+        Account account = new Account();
+        account.setAccountNumber(accountdto.getAccountNumber());
+        account.setBalance(accountdto.getBalance());
+        account.setAccountType(accountdto.getAccountType());
+        return account;
     }
 
 

@@ -30,14 +30,12 @@
         Show Account
     </button>
 </form>
-<form action="/createAccount" method="post" style="display: flex; gap: 8px; align-items: center; margin-top: 15px;">
-    <input type="text" name="customerNumber" placeholder="Enter Customer Number" required
-           style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-    <button type="submit" style="padding: 10px 15px; background: #52a883; color: white;
-    text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
-        Create Account for Customer
-    </button>
-</form>
+<a href="/createAccount" style="display: inline-block;
+ padding: 10px 15px; background: #52a883; color: white;
+ text-decoration: none; border-radius: 5px; margin-bottom: 10px; margin-right: 10px;">
+  Create Account For Customer
+</a>
+
 
 <h2>Login to Bank Application</h2>
 <form action="/login" method="get" style="display: flex; flex-direction: column; gap: 10px; width: 300px; margin-top: 15px;">

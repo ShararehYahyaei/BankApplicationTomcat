@@ -1,22 +1,24 @@
 package controller.accountServlet;
 
 import dto.AccountDto;
-import dto.CustomerDto;
 import entity.AccountType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import service.accuntService.AccountServiceImpl;
+import service.accuntService.AccountServiceInterface;
 
 import java.io.IOException;
 import java.util.Set;
 
 @WebServlet("/createAccount")
 public class CreateAccountServlet extends HttpServlet {
+    private final AccountServiceInterface accountService = new AccountServiceImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/createCustomer.jsp").forward(req, resp);
+        req.getRequestDispatcher("/createAccount.jsp").forward(req, resp);
     }
 
     @Override
@@ -39,6 +41,10 @@ public class CreateAccountServlet extends HttpServlet {
             if (!validate.isEmpty()) {
                 throw new RuntimeException(String.join("\n", validate));
             }
+            accountService.save(accountDto);
+            resp.setStatus(200);
+            resp.getWriter().write("{\"message\": \"Account created successfully\"}");
+            resp.sendRedirect("index.jsp");
 
         } catch (Exception e) {
             e.printStackTrace();
