@@ -6,12 +6,19 @@ import dto.TransferDto;
 import entity.*;
 
 import exception.accountException.AccountAlreadyExisted;
+import exception.accountException.AccountIsNotActive;
 import exception.accountException.AccountNotFoundException;
+import exception.accountException.InsufficientBalanceException;
+import exception.cardException.CardIsExpired;
+import exception.cardException.InvalidPasswordException;
+import exception.cardException.SourceCardOrDestinationCardIsNotActive;
 import exception.customer.CustomerNotFound;
 import org.hibernate.Session;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 
+import repository.cardRepository.CardRepository;
+import repository.cardRepository.CardRepositoryImpl;
 import repository.customerRepository.CustomerRepoImpl;
 import repository.customerRepository.CustomerRepository;
 import repository.transactionRepository.TransactionRepository;
@@ -19,12 +26,14 @@ import repository.transactionRepository.TransactionRepositoryImpl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class AccountServiceImpl implements AccountServiceInterface {
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
     private final CustomerRepository customerRepository = new CustomerRepoImpl();
+    private final CardRepository cardRepository = new CardRepositoryImpl();
 
 
     @Override
@@ -139,31 +148,57 @@ public class AccountServiceImpl implements AccountServiceInterface {
     @Override
     public void transfer(TransferDto transferDto) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                Account accountSource = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberSource());
-                Account accountDestination = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberDestination());
+            session.beginTransaction();
 
-                accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount() - 600);
-                accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
+            Card sourceCard = cardRepository.findByCardNumber(session, transferDto.getCardNumberSource());
+            Card destinationCard = cardRepository.findByCardNumber(session, transferDto.getCardNumberDestination());
+            Account accountSource = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberSource());
+            Account accountDestination = accountRepository.getAccountByCardNumber(session, transferDto.getCardNumberDestination());
 
-                Transaction newTransaction = getTransaction(transferDto, accountSource, accountDestination);
-
-
-                accountRepository.updateAccount(session, accountSource);
-                accountRepository.updateAccount(session, accountDestination);
-                transactionRepository.save(session, newTransaction);
-                session.getTransaction().commit();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                session.getTransaction().rollback();
-                System.out.println(e.getMessage());
+            if (sourceCard.getIncorrectPassword() > 3) {
+                sourceCard.setActive(false);
             }
 
+            if (!sourceCard.isActive() || !destinationCard.isActive()) {
+                throw new SourceCardOrDestinationCardIsNotActive("Source or destination card is not active");
+            }
+
+            if (!sourceCard.getExpiryDate().isEqual(transferDto.getExpiryDate())) {
+                throw new CardIsExpired("Source card expiration date does not match");
+            }
+
+            if (!destinationCard.getExpiryDate().isAfter(LocalDate.now())) {
+                throw new CardIsExpired("Destination card is expired");
+            }
+
+            if (accountSource.getBalance() < transferDto.getAmount()) {
+                throw new InsufficientBalanceException("Insufficient balance");
+            }
+
+            if (!Objects.equals(sourceCard.getPassword(), transferDto.getPassword())) {
+                sourceCard.setIncorrectPassword(sourceCard.getIncorrectPassword() + 1);
+                cardRepository.updateCard(session, sourceCard);
+                throw new InvalidPasswordException("Invalid password");
+            }
+
+            if (!accountSource.isActive() || !accountDestination.isActive()) {
+                throw new AccountIsNotActive("Source or destination account is not active");
+            }
+
+            accountSource.setBalance(accountSource.getBalance() - transferDto.getAmount() - 600);
+            accountDestination.setBalance(accountDestination.getBalance() + transferDto.getAmount());
+
+            Transaction newTransaction = getTransaction(transferDto, accountSource, accountDestination);
+
+            accountRepository.updateAccount(session, accountSource);
+            accountRepository.updateAccount(session, accountDestination);
+            transactionRepository.save(session, newTransaction);
+
+            session.getTransaction().commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 

@@ -62,11 +62,11 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean isAccountNumberExisted(Session session, String accountNumber) {
-        session.createQuery("SELECT 1 FROM Account a WHERE a.accountNumber = :accountNumber", Account.class)
+        List<Integer> results = session.createQuery(
+                        "SELECT 1 FROM Account a WHERE a.accountNumber = :accountNumber", Integer.class)
                 .setParameter("accountNumber", accountNumber)
-                .getSingleResult();
-        return true;
+                .getResultList();
+        return !results.isEmpty();
     }
-
 
 }

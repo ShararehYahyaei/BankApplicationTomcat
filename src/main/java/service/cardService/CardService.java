@@ -44,7 +44,6 @@ public class CardService implements CardServiceInterface {
                             customerService.update(session, byCustomerNumber);
                             accountByAccountNumber.setCard(newCard);
                             accountService.updateAccount(session, accountByAccountNumber);
-
                             session.getTransaction().commit();
                         } else {
                             throw new AccountIsNotActive("Account is not active");
@@ -77,6 +76,8 @@ public class CardService implements CardServiceInterface {
         newCard.setPassword(card.getPassword());
         newCard.setCvv2(card.getCvv2());
         newCard.setExpiryDate(card.getExpiryDate());
+        newCard.setActive(true);
+        newCard.setIncorrectPassword(0);
         return newCard;
     }
 

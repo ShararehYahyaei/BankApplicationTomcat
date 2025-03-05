@@ -16,7 +16,9 @@ public interface CardRepository {
 
     void delete(Session session, Card card);
 
-    Card getCardExpirationDate(Session session, String cardNumber);
+    LocalDate getCardExpirationDate(Session session, String cardNumber);
 
     Card findByCardNumber(Session session, String cardNumber);
+    Card updateCard(Session session, Card card);
+
 }

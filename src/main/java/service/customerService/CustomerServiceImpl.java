@@ -4,7 +4,9 @@ package service.customerService;
 import config.SessionFactoryInstance;
 import dto.CustomerDto;
 import entity.*;
+import exception.accountException.AccountAlreadyExisted;
 import exception.customer.CustomerNotFound;
+import exception.customer.CustomerNumberIsAlreadyExisted;
 import exception.customer.UsernameAlreadyExistsException;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
@@ -43,18 +45,29 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 if (isEmailExist(customerDto.getEmail()) != null) {
                     throw new UsernameAlreadyExistsException("Email already exists");
                 }
+                boolean customerNumber = isCustomerNumber(customerDto.getCustomerNumber());
+                if (customerNumber) {
+                    throw new CustomerNumberIsAlreadyExisted("Customer number already exists");
+                } else {
+                    Branch branch = branchService.findByCode(customerDto.getCode());
+                    Customer customer = createCustomer(customerDto, branch);
+                    String accountNumber = customerDto.getAccountNumber();
+                    boolean accountNumberExisted = accountRepository.isAccountNumberExisted(session, accountNumber);
+                    if (accountNumberExisted) {
+                        throw new AccountAlreadyExisted("Account already exists");
+                    } else {
+                        Account account = createAccount(customerDto, customer, branch);
+                        customer.getAccounts().add(account);
+                        Customer saveCustomer = customerRepository.save(session, customer);
+                        accountRepository.save(session, account);
+                        Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance()).destination(account).build();
+                        transactionService.save(session, transaction);
+                        session.getTransaction().commit();
+                        return saveCustomer;
 
-                Branch branch = branchService.findByCode(customerDto.getCode());
-                Customer customer = createCustomer(customerDto, branch);
-                Account account = createAccount(customerDto, customer, branch);
-                customer.getAccounts().add(account);
-                Customer saveCustomer = customerRepository.save(session, customer);
-                accountRepository.save(session, account);
-                Transaction transaction = Transaction.builder().transactionDate(LocalDate.now()).type(TransactionType.Deposit).amount(account.getBalance())
-                        .destination(account).build();
-                transactionService.save(session, transaction);
-                session.getTransaction().commit();
-                return saveCustomer;
+                    }
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 session.getTransaction().rollback();
@@ -247,21 +260,13 @@ public class CustomerServiceImpl implements CustomerServiceInter {
     }
 
     @Override
-    public Customer isCustomerNumber(String customerNumber) {
+    public boolean isCustomerNumber(String customerNumber) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            try {
-                session.beginTransaction();
-                Customer isCustomerNumber = customerRepository.isCustomerNumber(session, customerNumber);
-                session.getTransaction().commit();
-                return isCustomerNumber;
-
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-
+            boolean customerNumber1 = customerRepository.isCustomerNumber(session, customerNumber);
+            if (customerNumber1) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
-
-
 }
