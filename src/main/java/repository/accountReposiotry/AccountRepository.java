@@ -15,12 +15,15 @@ public interface AccountRepository {
     List<Account> findAll(Session session);
 
     void delete(Session session, Account account);
-
-    Account updateAccount(Session session, Account account);
     List<Account> getAccountsByCustomerNumber(Session session, String customerNumber);
-    Account getAccountByCardNumber (Session session, String cardNumber);
-    Account getAccountByAccountNumber (Session session, String accountNumber);
-    boolean isAccountNumberExisted(Session session ,String accountNumber);
+
+    Account getAccountByCardNumber(Session session, String cardNumber);
+
+    Account getAccountByAccountNumber(Session session, String accountNumber);
+
+    boolean isAccountNumberExisted(Session session, String accountNumber);
+    Account updateAccount(Session session, Account account);
+
 }
 
 

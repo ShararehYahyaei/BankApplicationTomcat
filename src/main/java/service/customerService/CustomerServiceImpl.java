@@ -43,9 +43,6 @@ public class CustomerServiceImpl implements CustomerServiceInter {
                 if (isEmailExist(customerDto.getEmail()) != null) {
                     throw new UsernameAlreadyExistsException("Email already exists");
                 }
-                if (isCustomerNumber(customerDto.getCustomerNumber()) != null) {
-                    throw new UsernameAlreadyExistsException("Customer number already exists");
-                }
 
                 Branch branch = branchService.findByCode(customerDto.getCode());
                 Customer customer = createCustomer(customerDto, branch);

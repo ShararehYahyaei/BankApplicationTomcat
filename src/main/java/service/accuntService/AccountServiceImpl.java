@@ -5,7 +5,10 @@ import dto.AccountDto;
 import dto.TransferDto;
 import entity.*;
 
+import exception.accountException.AccountAlreadyExisted;
 import exception.accountException.AccountNotFoundException;
+import exception.customer.CustomerNotFound;
+import org.hibernate.Session;
 import repository.accountReposiotry.AccountRepository;
 import repository.accountReposiotry.AccountRepositoryImpl;
 
@@ -33,6 +36,10 @@ public class AccountServiceImpl implements AccountServiceInterface {
                 Account account = createAccountForExistedCustomer(accountdto);
                 Customer byCustomerNumber = customerRepository.findByCustomerNumber(session, accountdto.getCustomerNumber());
                 account.setCustomer(byCustomerNumber);
+                if (isAccountNumberExisted(accountdto.getCustomerNumber())) {
+                    throw new AccountAlreadyExisted("Account already existed");
+
+                }
                 Account saveAccount = accountRepository.save(session, account);
                 byCustomerNumber.getAccounts().add(account);
                 customerRepository.update(session, byCustomerNumber);
@@ -187,4 +194,49 @@ public class AccountServiceImpl implements AccountServiceInterface {
         }
         return false;
     }
+
+    @Override
+    public Account getAccountByAccountNumber(String accountNumber) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            try {
+                session.beginTransaction();
+                Account accountByAccountNumber = accountRepository.getAccountByAccountNumber(session, accountNumber);
+                if (accountByAccountNumber != null) {
+                    session.getTransaction().commit();
+                    return accountByAccountNumber;
+                }
+                throw new AccountNotFoundException("Account with account Number " + accountNumber + " does not exist");
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Account update(Account account) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+
+            try {
+                session.beginTransaction();
+                Optional<Account> byId = accountRepository.findById(session, account.getId());
+                if (byId.isPresent()) {
+                    accountRepository.updateAccount(session, account);
+                    session.getTransaction().commit();
+                    return byId.get();
+                }
+            } catch (CustomerNotFound e) {
+                e.getCause().printStackTrace();
+                session.getTransaction().rollback();
+                System.err.println("Error: " + e.getMessage());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+
+    }
+
 }

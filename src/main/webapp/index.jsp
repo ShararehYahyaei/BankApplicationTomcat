@@ -17,7 +17,7 @@
            style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
     <button type="submit" style="padding: 10px 15px; background: #52a883; color: white;
     text-decoration: none; border-radius: 5px; border: none; cursor: pointer;">
-   Create Card For Customer
+   Create Card / Change Status Account
     </button>
 
 </form>
@@ -33,7 +33,7 @@
 <a href="/createAccount" style="display: inline-block;
  padding: 10px 15px; background: #52a883; color: white;
  text-decoration: none; border-radius: 5px; margin-bottom: 10px; margin-right: 10px;">
-  Create Account For Customer
+    Create Account For Customer
 </a>
 
 
