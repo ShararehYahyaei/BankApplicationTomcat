@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تغییر رمز کارت</title>
+    <title>change password</title>
 </head>
 <body>
-<h2>تغییر رمز کارت</h2>
+<h2>change password</h2>
 
 <form action="changePasswordForCard" method="POST">
     <label for="cardNumber">card Number</label>
