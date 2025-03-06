@@ -46,6 +46,7 @@ public class CreateCustomer extends HttpServlet {
                    .build();
             Set<String> validate = customerDto.validate();
             if (!validate.isEmpty()) {
+                request.setAttribute("errorList", validate);
                 throw new RuntimeException(String.join("\n", validate));
             }
             customerService.save(customerDto);
@@ -54,6 +55,7 @@ public class CreateCustomer extends HttpServlet {
             response.sendRedirect("index.jsp");
         } catch (Exception e) {
             response.setStatus(400);
+            e.printStackTrace();
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
