@@ -162,4 +162,12 @@ public class CardService implements CardServiceInterface {
         return null;
     }
 
+    @Override
+    public List<String> fetchByUserName(String userName) {
+        try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
+            List<String> cards = cardRepository.fetchCardByUserName( session,userName);
+            return cards;
+        }
+    }
+
 }

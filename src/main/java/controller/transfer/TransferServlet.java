@@ -19,6 +19,7 @@ public class TransferServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        System.out.println(req.getSession().getAttribute("currentCustomer"));
         req.getRequestDispatcher("/transfer.jsp").forward(req, resp);
 
     }

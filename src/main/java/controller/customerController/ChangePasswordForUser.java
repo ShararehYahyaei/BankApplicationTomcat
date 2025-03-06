@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import service.customerService.CustomerServiceImpl;
 import service.customerService.CustomerServiceInter;
 
@@ -24,14 +25,17 @@ public class ChangePasswordForUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            HttpSession session = req.getSession();
+            String userName =  session.getAttribute("currentCustomer").toString();
             String oldPassword = req.getParameter("oldPassword");
             String newPassword = req.getParameter("newPassword");
 
-            Optional<Customer> optionalCustomer = customerService.findByPassword(oldPassword);
+            Optional<Customer> optionalCustomer = customerService.findByPassword(oldPassword,userName);
+
             if (optionalCustomer.isPresent()) {
-                Customer customer = optionalCustomer.get();
-                customer.setPassword(newPassword);
-                customerService.update(customer);
+                Customer customerN = optionalCustomer.get();
+                customerN.setPassword(newPassword);
+                customerService.update(customerN);
                 req.setAttribute("message", "change password successful");
             } else {
                 req.setAttribute("error", "current  password is incorrect");

@@ -17,4 +17,5 @@ public interface CardServiceInterface {
 
     Card UpdateCard(Card card);
     Card findByCardNumber(String cardNumber);
+    List<String>fetchByUserName(String userName);
 }

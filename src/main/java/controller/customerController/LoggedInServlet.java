@@ -7,10 +7,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import service.cardService.CardService;
 import service.customerService.CustomerServiceImpl;
 import service.customerService.CustomerServiceInter;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/login")
 public class LoggedInServlet extends HttpServlet {
@@ -26,11 +29,11 @@ public class LoggedInServlet extends HttpServlet {
                 req.getRequestDispatcher("/error.jsp").forward(req, resp);
                 return;
             }
+            customerService.login(userName, password);
+            HttpSession session = req.getSession();
+            session.setAttribute("currentCustomer", userName);
 
-            Customer byCustomerNumber = customerService.login(userName, password);
             resp.setStatus(200);
-            req.setAttribute("byCustomerNumber", byCustomerNumber);
-            req.getSession().setAttribute("userId", byCustomerNumber.getId());
             req.getRequestDispatcher("/profile.jsp").forward(req, resp);
 
         } catch (Exception e) {

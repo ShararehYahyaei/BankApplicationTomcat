@@ -53,4 +53,16 @@ public class CardRepositoryImpl implements CardRepository {
         return card;
     }
 
+    @Override
+    public List<String> fetchCardByUserName(Session session, String userName) {
+
+       return session.createQuery("SELECT c.cardNumber FROM Card c " +
+               "JOIN Account a ON c.account.id = a.id " +
+               "JOIN Customer cu ON a.customer.id = cu.id " +
+               "WHERE cu.userName = :userName", String.class)
+                .setParameter("userName", userName)
+                .list();
+
+    }
+
 }

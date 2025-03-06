@@ -13,7 +13,6 @@ none; border-radius: 5px; margin-bottom: 10px; margin-right: 10px;">
     Transfer Money
 </a>
 
-
 <a href="/changePasswordForUser" style="display: inline-block; padding:
 10px 15px; background: #52a883; color: white; text-decoration: none;
  border-radius: 5px; margin-bottom: 10px;">

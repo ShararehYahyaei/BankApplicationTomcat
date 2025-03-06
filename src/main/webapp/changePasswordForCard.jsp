@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -9,8 +10,14 @@
 <h2>change password</h2>
 
 <form action="changePasswordForCard" method="POST">
-    <label for="cardNumber">card Number</label>
-    <input type="text" id="cardNumber" name="cardNumber" required><br><br>
+
+    <select name="cardNumbers"
+            style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <c:forEach var="cardNumber" items="${cardNumbers}">
+            <option value=${cardNumber}> ${cardNumber}</option>
+
+        </c:forEach>
+    </select>
 
     <label for="oldPassword">ole password</label>
     <input type="password" id="oldPassword" name="oldPassword" required><br><br>

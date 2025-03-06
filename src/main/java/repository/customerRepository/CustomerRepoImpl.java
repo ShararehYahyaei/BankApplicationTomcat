@@ -79,11 +79,12 @@ public class CustomerRepoImpl implements CustomerRepository {
     }
 
     @Override
-    public Optional<Customer> findByPassword(Session session, String oldPassword) {
-        Customer customer = session.createQuery("FROM Customer c WHERE c.password = :password", Customer.class)
+    public Optional<Customer> findByPassword(Session session, String oldPassword,String userName) {
+        Customer customer = session.createQuery("FROM Customer c WHERE c.password  = :password and c.userName=:username", Customer.class)
                 .setParameter("password", oldPassword)
+                .setParameter("username", userName)
                 .uniqueResult();
-        return Optional.ofNullable(customer);
+       return Optional.ofNullable(customer);
     }
 
 }

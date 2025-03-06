@@ -168,7 +168,6 @@ public class CustomerServiceImpl implements CustomerServiceInter {
 
     }
 
-
     @Override
     public void delete(Customer customer) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
@@ -269,13 +268,13 @@ public class CustomerServiceImpl implements CustomerServiceInter {
     }
 
     @Override
-    public Optional<Customer> findByPassword(String oldPassword) {
+    public Optional<Customer> findByPassword(String oldPassword,String userName) {
         try (var session = SessionFactoryInstance.getSessionFactory().openSession()) {
-            Optional<Customer> byPassword = customerRepository.findByPassword(session, oldPassword);
+            Optional<Customer> byPassword = customerRepository.findByPassword(session, oldPassword,userName);
             if (byPassword.isPresent()) {
                 return byPassword;
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

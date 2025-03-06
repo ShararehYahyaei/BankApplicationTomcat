@@ -21,4 +21,6 @@ public interface CardRepository {
     Card findByCardNumber(Session session, String cardNumber);
     Card updateCard(Session session, Card card);
 
+
+    List<String> fetchCardByUserName(Session session,  String userName);
 }
